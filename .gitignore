@@ -26,3 +26,6 @@ dist-ssr
 # Vercel
 .vercel
 .env*
+
+# Reference photos are not kept in the repo
+design/uploads/
