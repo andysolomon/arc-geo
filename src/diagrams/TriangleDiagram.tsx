@@ -3,7 +3,7 @@ import { clamp, fmt, type Pt } from '../lib/math';
 import { Handle } from './Handle';
 import { Labels, type LabelSpec } from './Label';
 import { Check, DiagramLayout, Equation, Note, Tile } from './controls';
-import { TRI_DEFAULT, TRI_H, TRI_W, triangleGeometry, type TriangleState } from './triangle';
+import { TRI_DEFAULT, TRI_H, TRI_W, isValidTriangle, triangleGeometry, type TriangleState } from './triangle';
 import { useDrag } from './useDrag';
 
 type V = keyof TriangleState;
@@ -14,13 +14,18 @@ export function TriangleDiagram() {
   const [showLines, setShowLines] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
   const g = useMemo(() => triangleGeometry(st), [st]);
-  const mover = (k: V) => (p: Pt) => setSt((s) => ({ ...s, [k]: clampPt(p) }));
+  // Ignore a move that would flatten the triangle or put two vertices on top of each other.
+  const tryMove = (s: TriangleState, k: V, p: Pt): TriangleState => {
+    const next = { ...s, [k]: clampPt(p) };
+    return isValidTriangle(next.A, next.B, next.C) ? next : s;
+  };
+  const mover = (k: V) => (p: Pt) => setSt((s) => tryMove(s, k, p));
   const moveA = useCallback(mover('A'), []), moveB = useCallback(mover('B'), []), moveC = useCallback(mover('C'), []);
   const dragA = useDrag(svgRef, moveA), dragB = useDrag(svgRef, moveB), dragC = useDrag(svgRef, moveC);
   const key = (k: V) => (e: KeyboardEvent<SVGElement>) => {
     const dx = e.key === 'ArrowRight' ? 5 : e.key === 'ArrowLeft' ? -5 : 0;
     const dy = e.key === 'ArrowDown' ? 5 : e.key === 'ArrowUp' ? -5 : 0;
-    if (dx || dy) { e.preventDefault(); setSt((s) => ({ ...s, [k]: clampPt([s[k][0] + dx, s[k][1] + dy]) })); }
+    if (dx || dy) { e.preventDefault(); setSt((s) => tryMove(s, k, [s[k][0] + dx, s[k][1] + dy])); }
   };
   const { A, B, C } = st;
   const out = (P: Pt, Q: Pt, R: Pt): Pt => {
@@ -80,7 +85,7 @@ export function TriangleDiagram() {
         <Tile label="Exterior angle at C" value={`${fmt(g.exterior, 0)}° = ${fmt(g.angles.A, 0)}° + ${fmt(g.angles.B, 0)}°`} tone="orange" size={16} />
         <Tile label="Longest side · largest angle" value={`${g.longest} · ∠${g.largest}`} tone="accent" size={20} />
       </div>
-      <div className="tile bg-soft text-[15px]"><div className="tile-label">Pythagorean check (c = longest side)</div><div className="overflow-x-auto"><Equation tex={g.pyth.expr} /></div><div className="text-[13px] text-muted mt-1">{g.pyth.relation === 'equal' ? 'Equal: the triangle is right.' : g.pyth.relation === 'less' ? 'Less: the triangle is acute.' : 'Greater: the triangle is obtuse.'}</div></div>
+      <div className="tile bg-soft text-[15px]"><div className="tile-label">Pythagorean check: c² against a² + b² (c = longest side)</div><div className="overflow-x-auto"><Equation tex={g.pyth.expr} /></div><div className="text-[13px] text-muted mt-1">{g.pyth.relation === 'equal' ? 'Equal: c² = a² + b². The triangle is right.' : g.pyth.relation === 'less' ? 'Less: c² < a² + b². The triangle is acute.' : 'Greater: c² > a² + b². The triangle is obtuse.'}</div></div>
       <Check label="Show the altitude (violet), median (green), and angle bisector (orange) from A" checked={showLines} onChange={setShowLines} />
       <Note>Drag A, B, or C. Side lengths are in grid units. The angles always add to 180°.</Note>
     </DiagramLayout>

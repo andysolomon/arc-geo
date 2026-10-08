@@ -12,6 +12,13 @@ const angleAt = (V: Pt, P: Pt, Q: Pt) => {
   return deg(Math.acos(Math.max(-1, Math.min(1, (b * b + c * c - a * a) / (2 * b * c)))));
 };
 
+/** Minimum side (px) and area (px²) for a triangle to count as a triangle in the diagrams. */
+export const MIN_SIDE_PX = 12, MIN_AREA_PX = 150;
+export function isValidTriangle(A: Pt, B: Pt, C: Pt): boolean {
+  const area = Math.abs((B[0] - A[0]) * (C[1] - A[1]) - (C[0] - A[0]) * (B[1] - A[1])) / 2;
+  return dist(A, B) >= MIN_SIDE_PX && dist(B, C) >= MIN_SIDE_PX && dist(A, C) >= MIN_SIDE_PX && area >= MIN_AREA_PX;
+}
+
 export function classifyByAngles(angles: number[]): 'acute' | 'right' | 'obtuse' {
   const max = Math.max(...angles);
   if (Math.abs(max - 90) < 0.5) return 'right';
@@ -41,8 +48,9 @@ export function triangleGeometry({ A, B, C }: TriangleState): TriangleGeometry {
   const angA = angleAt(A, B, C), angB = angleAt(B, A, C), angC = angleAt(C, A, B);
   const sides = [a, b, c];
   const sorted = [...sides].sort((x, y) => x - y);
-  const lhs = sorted[0] ** 2 + sorted[1] ** 2, rhs = sorted[2] ** 2;
-  const relation = Math.abs(lhs - rhs) < 0.25 ? 'equal' : lhs < rhs ? 'less' : 'greater';
+  // Compare c² with a² + b² for the longest side c: equal → right, less → acute, greater → obtuse.
+  const sum = sorted[0] ** 2 + sorted[1] ** 2, csq = sorted[2] ** 2;
+  const relation = Math.abs(csq - sum) < 0.25 ? 'equal' : csq < sum ? 'less' : 'greater';
   const names = ['a', 'b', 'c'];
   const longest = names[sides.indexOf(Math.max(...sides))];
   const angs = [angA, angB, angC];
@@ -65,7 +73,7 @@ export function triangleGeometry({ A, B, C }: TriangleState): TriangleGeometry {
     sides: { a, b, c },
     byAngles: classifyByAngles(angs), bySides: classifyBySides(sides),
     exterior: 180 - angC,
-    pyth: { expr: `${fmt(sorted[0], 1)}^2 + ${fmt(sorted[1], 1)}^2 = ${fmt(lhs, 1)}\\ ${relation === 'equal' ? '=' : relation === 'less' ? '<' : '>'}\\ ${fmt(sorted[2], 1)}^2 = ${fmt(rhs, 1)}`, relation },
+    pyth: { expr: `c^2 = ${fmt(sorted[2], 1)}^2 = ${fmt(csq, 1)}\\ ${relation === 'equal' ? '=' : relation === 'less' ? '<' : '>'}\\ ${fmt(sorted[0], 1)}^2 + ${fmt(sorted[1], 1)}^2 = ${fmt(sum, 1)}`, relation },
     longest, largest,
     foot, mid, bis, footOutside: t < 0 || t > 1,
     markers: [marker(A, B, C, 22), marker(B, C, A, 22), marker(C, A, B, 22)],

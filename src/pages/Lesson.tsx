@@ -92,7 +92,7 @@ function Built({ sec, lesson }: { sec: SectionRef; lesson: LessonData }) {
             <h2 id="diagram-h" className="h3">Interactive diagram</h2>
             <div className="text-[13px] text-muted">{diagram.hint}</div>
           </div>
-          <Diagram sectionId={sec.id} />
+          <Diagram key={sec.id} sectionId={sec.id} />
         </section>
       )}
 

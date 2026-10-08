@@ -38,7 +38,7 @@ Ids: checks `cN-k-m` (lesson `N-k`, m = 1..3); chapter problems `pN-m`; suppleme
 `figure` is one of:
 
 - `{ kind: 'angle', degrees }`: one angle ABC of that measure
-- `{ kind: 'triangle', a, b, c, labels? }`: a triangle drawn to scale from three side lengths; side a is opposite vertex A, and so on; the sides must satisfy the triangle inequality
+- `{ kind: 'triangle', a, b, c, labels?, hide? }`: a triangle drawn to scale from three side lengths; side a is opposite vertex A, and so on; the sides must satisfy the triangle inequality. `hide: ['c']` shows that side as `?`; always hide the side the question asks for
 - `{ kind: 'parallel', angle }`: two parallel lines and a transversal, angles numbered 1–8 (1–4 at the top intersection, 5–8 at the bottom; 1 and 5 are the top-left angles, numbering goes clockwise); angle 1 has the given measure
 - `{ kind: 'rect', w, h }`: a rectangle with its dimensions labelled
 - `{ kind: 'polygon', n }`: a regular n-gon

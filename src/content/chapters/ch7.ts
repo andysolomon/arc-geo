@@ -257,7 +257,7 @@ questions: [
     solution: ['Cross multiply. $x^2 = 2 \\cdot 18 = 36$', '$x = \\sqrt{36} = 6$'] },
 
   // ---- 7-2 checks
-  { id: 'c7-2-1', chapter: 'ch7', section: '7-2', set: 'check', type: 'diagram', figure: { kind: 'triangle', a: 8.94, b: 4.47, c: 10 }, prompt: 'Triangle $ACB$ has its right angle at $C$. The altitude from $C$ meets $\\overline{AB}$ at $D$. $AD = 2$ and $DB = 8$. Find the altitude $CD$.', answer: 4, tolerance: 0.05,
+  { id: 'c7-2-1', chapter: 'ch7', section: '7-2', set: 'check', type: 'diagram', figure: { kind: 'triangle', a: 8.94, b: 4.47, c: 10, hide: ['a', 'b'] }, prompt: 'Triangle $ACB$ has its right angle at $C$. The altitude from $C$ meets $\\overline{AB}$ at $D$. $AD = 2$ and $DB = 8$. Find the altitude $CD$.', answer: 4, tolerance: 0.05,
     solution: ['Use Theorem 7.2. The altitude is the geometric mean of $AD$ and $DB$.', '$CD^2 = 2 \\cdot 8 = 16$', '$CD = 4$'] },
   { id: 'c7-2-2', chapter: 'ch7', section: '7-2', set: 'check', type: 'numeric', prompt: 'Triangle $ACB$ has its right angle at $C$. The altitude from $C$ meets $\\overline{AB}$ at $D$. $AD = 4$ and $DB = 5$. Find the leg $AC$.', answer: 6, tolerance: 0.05,
     solution: ['The hypotenuse is $AB = 4 + 5 = 9$.', 'Use Theorem 7.3. Leg $AC$ is next to segment $AD$.', '$AC^2 = AB \\cdot AD = 9 \\cdot 4 = 36$', '$AC = 6$'] },
@@ -265,7 +265,7 @@ questions: [
     solution: ['The altitude is the geometric mean of the two segments.', '$6^2 = 3 \\cdot y$, so $36 = 3y$.', '$y = 12$'] },
 
   // ---- 7-3 checks
-  { id: 'c7-3-1', chapter: 'ch7', section: '7-3', set: 'check', type: 'diagram', figure: { kind: 'triangle', a: 9, b: 12, c: 15 }, prompt: 'A right triangle has legs 9 and 12. Find the hypotenuse.', answer: 15, tolerance: 0.5,
+  { id: 'c7-3-1', chapter: 'ch7', section: '7-3', set: 'check', type: 'diagram', figure: { kind: 'triangle', a: 9, b: 12, c: 15, hide: ['c'] }, prompt: 'A right triangle has legs 9 and 12. Find the hypotenuse.', answer: 15, tolerance: 0.5,
     solution: ['Use Theorem 7.4. $c^2 = 9^2 + 12^2 = 81 + 144 = 225$', '$c = \\sqrt{225} = 15$'] },
   { id: 'c7-3-2', chapter: 'ch7', section: '7-3', set: 'check', type: 'numeric', prompt: 'A right triangle has hypotenuse 25 and one leg 7. Find the other leg.', answer: 24, tolerance: 0.5,
     solution: ['$a^2 = 25^2 - 7^2 = 625 - 49 = 576$', '$a = \\sqrt{576} = 24$'] },
@@ -277,7 +277,7 @@ questions: [
     solution: ['Divide both legs by 2. You get 7 and 24.', '7-24-25 is a triple, so 14-48-50 is a triple.', 'The hypotenuse is 50.'] },
   { id: 'c7-4-2', chapter: 'ch7', section: '7-4', set: 'check', type: 'mc', prompt: 'Which set of numbers is NOT a Pythagorean triple?', choices: ['9, 12, 15', '10, 24, 26', '8, 15, 17', '6, 10, 12'], answer: 3,
     solution: ['9-12-15 is $3 \\times (3\\text{-}4\\text{-}5)$. 10-24-26 is $2 \\times (5\\text{-}12\\text{-}13)$. 8-15-17 is a common triple.', 'Test 6, 10, 12: $36 + 100 = 136$, but $12^2 = 144$.', 'The numbers do not match, so 6, 10, 12 is not a triple.'] },
-  { id: 'c7-4-3', chapter: 'ch7', section: '7-4', set: 'check', type: 'diagram', figure: { kind: 'triangle', a: 15, b: 36, c: 39 }, prompt: 'A right triangle has hypotenuse 39 and one leg 15. Find the other leg.', answer: 36, tolerance: 0.5,
+  { id: 'c7-4-3', chapter: 'ch7', section: '7-4', set: 'check', type: 'diagram', figure: { kind: 'triangle', a: 15, b: 36, c: 39, hide: ['b'] }, prompt: 'A right triangle has hypotenuse 39 and one leg 15. Find the other leg.', answer: 36, tolerance: 0.5,
     solution: ['Divide by 3. You get 13 and 5.', '5-12-13 is a triple. The missing number is 12.', 'Multiply back by 3. The other leg is 36.'] },
 
   // ---- 7-5 checks
@@ -293,13 +293,13 @@ questions: [
     solution: ['Use Theorem 7.8. The hypotenuse is $\\sqrt{2}$ times a leg.', '$c = 8\\sqrt{2}$'] },
   { id: 'c7-6-2', chapter: 'ch7', section: '7-6', set: 'check', type: 'numeric', prompt: 'A 30-60-90 triangle has a shorter leg of 5. Find the hypotenuse.', answer: 10, tolerance: 0.5,
     solution: ['Use Theorem 7.9. The hypotenuse is twice the shorter leg.', '$c = 2 \\cdot 5 = 10$'] },
-  { id: 'c7-6-3', chapter: 'ch7', section: '7-6', set: 'check', type: 'diagram', figure: { kind: 'triangle', a: 7, b: 12.12, c: 14 }, prompt: 'A 30-60-90 triangle has hypotenuse 14. Find the longer leg to two decimal places.', answer: 12.12, tolerance: 0.05,
+  { id: 'c7-6-3', chapter: 'ch7', section: '7-6', set: 'check', type: 'diagram', figure: { kind: 'triangle', a: 7, b: 12.12, c: 14, hide: ['a', 'b'] }, prompt: 'A 30-60-90 triangle has hypotenuse 14. Find the longer leg to two decimal places.', answer: 12.12, tolerance: 0.05,
     solution: ['Shorter leg first: $x = 14 \\div 2 = 7$', 'Longer leg: $x\\sqrt{3} = 7\\sqrt{3}$', '$7\\sqrt{3} \\approx 12.12$'] },
 
   // ---- Chapter 7 problems (full solutions)
   { id: 'p7-1', chapter: 'ch7', section: '7-1', set: 'chapter', type: 'numeric', prompt: 'Find the geometric mean of 8 and 18.', answer: 12, tolerance: 0.05,
     solution: ['Write the proportion. $\\frac{8}{x} = \\frac{x}{18}$', 'Cross multiply. $x^2 = 8 \\cdot 18 = 144$', 'Take the positive square root. $x = 12$'] },
-  { id: 'p7-2', chapter: 'ch7', section: '7-2', set: 'chapter', type: 'diagram', figure: { kind: 'triangle', a: 20, b: 15, c: 25 }, prompt: 'Triangle $ACB$ has its right angle at $C$. The altitude from $C$ meets $\\overline{AB}$ at $D$. $AD = 9$ and $DB = 16$. Find the altitude $CD$.', answer: 12, tolerance: 0.05,
+  { id: 'p7-2', chapter: 'ch7', section: '7-2', set: 'chapter', type: 'diagram', figure: { kind: 'triangle', a: 20, b: 15, c: 25, hide: ['a', 'b'] }, prompt: 'Triangle $ACB$ has its right angle at $C$. The altitude from $C$ meets $\\overline{AB}$ at $D$. $AD = 9$ and $DB = 16$. Find the altitude $CD$.', answer: 12, tolerance: 0.05,
     solution: ['The altitude to the hypotenuse is the geometric mean of the two segments (Theorem 7.2).', '$CD^2 = AD \\cdot DB = 9 \\cdot 16 = 144$', '$CD = \\sqrt{144} = 12$', 'Check with Theorem 7.3: $AC^2 = 25 \\cdot 9 = 225$, so $AC = 15$. $BC^2 = 25 \\cdot 16 = 400$, so $BC = 20$. And $15^2 + 20^2 = 25^2$.'] },
   { id: 'p7-3', chapter: 'ch7', section: '7-3', set: 'chapter', type: 'numeric', prompt: 'A 10-foot ladder leans against a wall. Its foot is 6 feet from the wall. How high up the wall does the ladder reach?', answer: 8, tolerance: 0.5, unit: 'ft',
     solution: ['The ladder, the wall, and the ground form a right triangle. The ladder is the hypotenuse.', 'Use Theorem 7.4. $h^2 = 10^2 - 6^2 = 100 - 36 = 64$', '$h = \\sqrt{64} = 8$ feet'] },

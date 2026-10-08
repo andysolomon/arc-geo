@@ -98,6 +98,8 @@ export function Figure({ spec }: { spec: FigureSpec }) {
   if (spec.kind === 'triangle') {
     const { a, b, c } = spec;
     const [la, lb, lc] = spec.labels ?? ['A', 'B', 'C'];
+    const hide = new Set(spec.hide ?? []);
+    const side = (k: 'a' | 'b' | 'c', v: number) => (hide.has(k) ? '?' : String(v));
     // Place A at origin, B along the base at distance c, C from the law of cosines.
     const cx = (b * b + c * c - a * a) / (2 * c), cy = Math.sqrt(Math.max(0, b * b - cx * cx));
     const minX = Math.min(0, cx), maxX = Math.max(c, cx), span = Math.max(maxX - minX, cy), u = 150 / span;
@@ -107,19 +109,20 @@ export function Figure({ spec }: { spec: FigureSpec }) {
     const nrm = (p: Pt, q: Pt, k: number): Pt => { const dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy) || 1; return [(dy / L) * k, (-dx / L) * k]; };
     const sa = mid(B, C, nrm(B, C, -12)), sb = mid(A, C, nrm(A, C, 12)), sc = mid(A, B, [0, 14]);
     return (
-      <svg {...svgProps} viewBox="0 0 200 200" aria-label={`Triangle ${la}${lb}${lc} with sides ${a}, ${b}, ${c}`}>
+      <svg {...svgProps} viewBox="0 0 200 200" aria-label={`Triangle ${la}${lb}${lc} with sides ${side('a', a)}, ${side('b', b)}, ${side('c', c)}`}>
         <polygon points={`${A} ${B} ${C}`} fill="var(--violet)" fillOpacity={0.1} stroke="currentColor" strokeWidth={1.8} strokeLinejoin="round" />
         <text x={A[0] - 10} y={A[1] + 12} fontSize={13} fill="currentColor">{la}</text>
         <text x={B[0] + 4} y={B[1] + 12} fontSize={13} fill="currentColor">{lb}</text>
         <text x={C[0]} y={C[1] - 6} fontSize={13} fill="currentColor" textAnchor="middle">{lc}</text>
-        <text x={sa[0]} y={sa[1] + 4} fontSize={12} fill="var(--accent)" textAnchor="middle">{a}</text>
-        <text x={sb[0]} y={sb[1] + 4} fontSize={12} fill="var(--accent)" textAnchor="middle">{b}</text>
-        <text x={sc[0]} y={sc[1] + 4} fontSize={12} fill="var(--accent)" textAnchor="middle">{c}</text>
+        <text x={sa[0]} y={sa[1] + 4} fontSize={12} fill="var(--accent)" textAnchor="middle">{side('a', a)}</text>
+        <text x={sb[0]} y={sb[1] + 4} fontSize={12} fill="var(--accent)" textAnchor="middle">{side('b', b)}</text>
+        <text x={sc[0]} y={sc[1] + 4} fontSize={12} fill="var(--accent)" textAnchor="middle">{side('c', c)}</text>
       </svg>
     );
   }
   if (spec.kind === 'parallel') {
-    const th = (spec.angle * Math.PI) / 180, y1 = 70, y2 = 140, cx = 100;
+    // Angle 1 is the top-left angle at the upper intersection; the transversal's direction angle is its supplement.
+    const th = ((180 - spec.angle) * Math.PI) / 180, y1 = 70, y2 = 140, cx = 100;
     const P: Pt = [cx + (105 - y1) / Math.tan(th), y1], Q: Pt = [cx + (105 - y2) / Math.tan(th), y2];
     const d: Pt = [Math.cos(th), -Math.sin(th)];
     const t0: Pt = [cx + 90 * d[0], 105 + 90 * d[1]], t1: Pt = [cx - 90 * d[0], 105 - 90 * d[1]];

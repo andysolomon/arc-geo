@@ -60,8 +60,8 @@ export type Figure =
   | { kind: 'sector'; r: number; angle: number }
   /** One angle of the given measure in degrees, vertex B, rays BA and BC. */
   | { kind: 'angle'; degrees: number }
-  /** Triangle drawn to scale from three side lengths (must satisfy the triangle inequality). Optional vertex labels, default A B C. */
-  | { kind: 'triangle'; a: number; b: number; c: number; labels?: [string, string, string] }
+  /** Triangle drawn to scale from three side lengths (must satisfy the triangle inequality). Optional vertex labels, default A B C. `hide` lists sides whose length shows as "?" (use for the side the question asks for). */
+  | { kind: 'triangle'; a: number; b: number; c: number; labels?: [string, string, string]; hide?: ('a' | 'b' | 'c')[] }
   /** Two parallel lines cut by a transversal; the marked angle (top left, between the transversal and the upper line) has the given measure. Angles are numbered 1–8. */
   | { kind: 'parallel'; angle: number }
   /** Rectangle w by h (not to scale beyond 1:3 aspect). */

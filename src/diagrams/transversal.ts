@@ -31,7 +31,9 @@ export function transversalGeometry(theta: number, parallel: boolean): Transvers
   const dm = dir(0), dn = dir(phi), dt = dir(theta);
   const pm: Pt = [CX, CY - GAP], pn: Pt = [CX, CY + GAP], pt: Pt = [CX, CY];
   const P = intersect(pt, dt, pm, dm);
-  const Q = intersect(pt, dt, pn, dn);
+  // Q is where the transversal crosses y = CY + GAP, whatever the tilt of n; n is then drawn through Q.
+  // This keeps both intersections inside the drawing for every slider value.
+  const Q = intersect(pt, dt, pn, dm);
   const ext = (p: Pt, d: Pt, len: number): [Pt, Pt] => [[p[0] - d[0] * len, p[1] - d[1] * len], [p[0] + d[0] * len, p[1] + d[1] * len]];
   const a = Math.round(theta);
   const psi = Math.round(theta - phi);
@@ -46,7 +48,7 @@ export function transversalGeometry(theta: number, parallel: boolean): Transvers
     place(P, neg(dm), dt), place(P, dm, dt), place(P, dm, neg(dt)), place(P, neg(dm), neg(dt)),
     place(Q, neg(dn), dt), place(Q, dn, dt), place(Q, dn, neg(dt)), place(Q, neg(dn), neg(dt)),
   ];
-  return { P, Q, m: ext(pm, dm, 200), n: ext(pn, dn, 200), t: ext(pt, dt, 170), angles, labelAt, parallel, perpendicular: a === 90 };
+  return { P, Q, m: ext(pm, dm, 210), n: ext(Q, dn, 210), t: ext(pt, dt, 170), angles, labelAt, parallel, perpendicular: a === 90 };
 }
 
 export const PAIRS: { name: string; pairs: [number, number][]; relation: 'equal' | 'supplementary' }[] = [

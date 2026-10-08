@@ -3,6 +3,7 @@ import { clamp, fmt, type Pt } from '../lib/math';
 import { Handle } from './Handle';
 import { Labels, type LabelSpec } from './Label';
 import { DiagramLayout, Equation, Note, Slider, Tile, deg } from './controls';
+import { isValidTriangle } from './triangle';
 import { useDrag } from './useDrag';
 
 const W = 480, H = 300, U = 20;
@@ -16,12 +17,16 @@ export function SimilarDiagram() {
   const [t, setT] = useState<Tri>(DEFAULT);
   const [k, setK] = useState(2);
   const svgRef = useRef<SVGSVGElement>(null);
-  const mover = (key: keyof Tri) => (p: Pt) => setT((s) => ({ ...s, [key]: clampPt(p) }));
+  const tryMove = (s: Tri, key: keyof Tri, p: Pt): Tri => {
+    const next = { ...s, [key]: clampPt(p) };
+    return isValidTriangle(next.A, next.B, next.C) ? next : s;
+  };
+  const mover = (key: keyof Tri) => (p: Pt) => setT((s) => tryMove(s, key, p));
   const mA = useCallback(mover('A'), []), mB = useCallback(mover('B'), []), mC = useCallback(mover('C'), []);
   const dA = useDrag(svgRef, mA), dB = useDrag(svgRef, mB), dC = useDrag(svgRef, mC);
   const key = (kk: keyof Tri) => (e: KeyboardEvent<SVGElement>) => {
     const dx = e.key === 'ArrowRight' ? 5 : e.key === 'ArrowLeft' ? -5 : 0, dy = e.key === 'ArrowDown' ? 5 : e.key === 'ArrowUp' ? -5 : 0;
-    if (dx || dy) { e.preventDefault(); setT((s) => ({ ...s, [kk]: clampPt([s[kk][0] + dx, s[kk][1] + dy]) })); }
+    if (dx || dy) { e.preventDefault(); setT((s) => tryMove(s, kk, [s[kk][0] + dx, s[kk][1] + dy])); }
   };
   const g = useMemo(() => {
     const { A, B, C } = t;
