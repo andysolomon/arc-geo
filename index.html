@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Interactive Geometry Study Guide: lessons, diagrams, videos, problems, and a customized exam." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet" />
+    <title>Interactive Geometry Study Guide</title>
+    <script>
+      try {
+        var raw = localStorage.getItem('geo-guide-v1');
+        var theme = raw && JSON.parse(raw).state && JSON.parse(raw).state.theme;
+        if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

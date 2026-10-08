@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--serif-display:'Newsreader',Georgia,'Times New Roman',serif;--serif-text:'Source Serif 4',Georgia,'Times New Roman',serif;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--bg:#f7f5f0;--panel:#fffdf9;--ink:#1c1b18;--muted:#6b675f;--line:#e4e0d8;--soft:#efece5;--accent:oklch(0.47 0.09 165);--accent-soft:oklch(0.94 0.03 165);--violet:oklch(0.5 0.13 290);--violet-soft:oklch(0.94 0.03 290);--orange:oklch(0.6 0.13 50);--orange-soft:oklch(0.94 0.035 50);--red:oklch(0.52 0.16 25);--red-soft:oklch(0.94 0.03 25);--face1:#efece5;--face2:#e0dcd2;--face3:#cfcabd;}
+[data-theme="dark"]{--bg:#141518;--panel:#1c1e22;--ink:#ebe7df;--muted:#9c9890;--line:#2c2f35;--soft:#24272c;--accent:oklch(0.76 0.1 165);--accent-soft:oklch(0.3 0.04 165);--violet:oklch(0.78 0.11 290);--violet-soft:oklch(0.32 0.05 290);--orange:oklch(0.78 0.12 55);--orange-soft:oklch(0.32 0.05 55);--red:oklch(0.74 0.14 25);--red-soft:oklch(0.32 0.05 25);--face1:#2b2e34;--face2:#363a41;--face3:#43484f;}
+html,body{margin:0;background:var(--bg);}
+body{font-family:var(--serif-text);color:var(--ink);-webkit-font-smoothing:antialiased;}
+a{color:var(--accent);} a:hover{color:var(--ink);}
+button{font-family:inherit;} input{font-family:inherit;}
+input[type=range]{accent-color:var(--accent);width:100%;}
+input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px;}
+</style>
+</helmet>
+<div data-theme="light" style="min-height:100vh;background:var(--bg);color:var(--ink);font-family:var(--serif-text);font-size:17px;line-height:1.6;">
+  <main style="max-width:1100px;margin:0 auto;padding:48px 28px 96px;box-sizing:border-box;display:flex;flex-direction:column;gap:56px;">
+
+    <header style="display:flex;flex-direction:column;gap:14px;max-width:70ch;">
+      <div style="font-variant:small-caps;letter-spacing:.1em;color:var(--accent);font-weight:600;font-size:15px;">Design system · v1</div>
+      <h1 style="font-family:var(--serif-display);font-weight:500;font-size:clamp(36px,5.5vw,56px);line-height:1.05;letter-spacing:-.01em;margin:0;">Interactive Geometry Study Guide</h1>
+      <p style="margin:0;color:var(--muted);text-wrap:pretty;">A textbook on screen. Serif type carries the reading. Three hue roles carry the geometry. Everything else stays quiet.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:8px;">
+        <div style="padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);"><b>Read like a book.</b> Long measure, 17px text, generous leading, small-caps labels.</div>
+        <div style="padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);"><b>Color means something.</b> Green for arcs and correct, violet for angles and selection, orange for horizontal change and bookmarks.</div>
+        <div style="padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);"><b>Write in STE.</b> Short active sentences. One idea each. Max 25 words.</div>
+      </div>
+      <p style="margin:4px 0 0;font-size:14px;color:var(--muted);">Used by <a href="Interactive Geometry Study Guide.dc.html">the study guide</a>. Tokens live as CSS variables on <code style="font-family:var(--mono);font-size:.85em;">:root</code> and <code style="font-family:var(--mono);font-size:.85em;">[data-theme="dark"]</code>.</p>
+    </header>
+
+    <section style="display:flex;flex-direction:column;gap:20px;">
+      <h2 style="font-family:var(--serif-display);font-weight:500;font-size:34px;margin:0;line-height:1.1;">Type system</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;">
+        <div style="padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);">--serif-display · Newsreader 500</div>
+          <div style="font-family:var(--serif-display);font-size:44px;line-height:1.05;font-weight:500;margin-top:8px;">Arcs and Inscribed Angles</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:8px;">Titles, section heads, readout numbers, diagram labels (italic). Optical size tracks the font size.</div>
+        </div>
+        <div style="padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);">--serif-text · Source Serif 4</div>
+          <div style="font-size:17px;line-height:1.6;margin-top:8px;">An inscribed angle has its vertex on the circle. Its two sides are chords. The angle cuts off an arc.</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:8px;">Body, navigation, buttons, inputs. 17px on 1.6 at a 65–68ch measure.</div>
+        </div>
+        <div style="padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);">small-caps · Source Serif 4 600</div>
+          <div style="font-variant:small-caps;letter-spacing:.1em;color:var(--accent);font-weight:600;font-size:15px;margin-top:10px;">Chapter 8 · Section 4</div>
+          <div style="font-variant:small-caps;letter-spacing:.08em;color:var(--muted);font-weight:600;font-size:13px;margin-top:6px;">Inscribed Angle Theorem</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:8px;">Eyebrows, formula labels, tile captions. Never uppercase transforms.</div>
+        </div>
+        <div style="padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);">--mono · JetBrains Mono</div>
+          <div style="font-family:var(--mono);font-size:15px;margin-top:10px;">0/8 · 42% · 14:59 · [ ]</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:8px;">Counts, percentages, timers, keyboard hints, code. Tabular by nature.</div>
+        </div>
+      </div>
+      <div style="padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);display:grid;grid-template-columns:auto 1fr;gap:10px 24px;align-items:baseline;">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">H1 46 / 1.08</span><span style="font-family:var(--serif-display);font-weight:500;font-size:46px;line-height:1.08;">Page title</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">H2 27 / 1.2</span><span style="font-family:var(--serif-display);font-weight:500;font-size:27px;">Worked examples</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">H3 22 / 1.2</span><span style="font-family:var(--serif-display);font-weight:500;font-size:22px;">Interactive diagram</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">Readout 30</span><span style="font-family:var(--serif-display);font-weight:500;font-size:30px;color:var(--accent);">130°</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">Body 17 / 1.6</span><span>The arc is on the far side of the vertex.</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">Small 14</span><span style="font-size:14px;color:var(--muted);">Answers only. Check your answer, or reveal it.</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">Math</span><span style="font-family:var(--serif-display);font-style:italic;font-size:19px;">m∠ABC = ½ m⌢AC &nbsp;<span style="font-style:normal;font-family:var(--serif-text);font-size:14px;color:var(--muted);">(rendered with KaTeX in the app)</span></span>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:20px;">
+      <h2 style="font-family:var(--serif-display);font-weight:500;font-size:34px;margin:0;line-height:1.1;">Color</h2>
+      <p style="margin:0;color:var(--muted);max-width:70ch;">Warm paper neutrals. Accents share lightness and chroma and differ only in hue, so they sit at equal weight in a diagram. Each accent has a <i>soft</i> tint for fills.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
+        <div data-theme="light" style="background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;">
+          <div style="font-variant:small-caps;letter-spacing:.1em;font-weight:600;font-size:15px;color:var(--muted);">Light</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+            <div><div style="height:44px;border-radius:8px;background:var(--bg);border:1px solid var(--line);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--bg</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--panel);border:1px solid var(--line);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--panel</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--line);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--line</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--ink);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--ink</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--muted);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--muted</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--accent);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--accent</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--accent-soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--accent-soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--violet);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--violet</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--violet-soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--violet-soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--orange);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--orange</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--orange-soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--orange-soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--red);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--red</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--red-soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--red-soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--face2);border:1px solid var(--face3);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--face1–3</div></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;">bg #f7f5f0 · panel #fffdf9 · ink #1c1b18 · muted #6b675f · line #e4e0d8 · soft #efece5<br>accent oklch(.47 .09 165) · violet oklch(.50 .13 290) · orange oklch(.60 .13 50) · red oklch(.52 .16 25) · softs L .94 C .03</div>
+        </div>
+        <div data-theme="dark" style="background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;">
+          <div style="font-variant:small-caps;letter-spacing:.1em;font-weight:600;font-size:15px;color:var(--muted);">Dark</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+            <div><div style="height:44px;border-radius:8px;background:var(--bg);border:1px solid var(--line);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--bg</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--panel);border:1px solid var(--line);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--panel</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--line);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--line</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--ink);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--ink</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--muted);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--muted</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--accent);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--accent</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--accent-soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--accent-soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--violet);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--violet</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--violet-soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--violet-soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--orange);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--orange</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--orange-soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--orange-soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--red);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--red</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--red-soft);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--red-soft</div></div>
+            <div><div style="height:44px;border-radius:8px;background:var(--face2);border:1px solid var(--face3);"></div><div style="font-family:var(--mono);font-size:11px;margin-top:4px;">--face1–3</div></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7;">bg #141518 · panel #1c1e22 · ink #ebe7df · muted #9c9890 · line #2c2f35 · soft #24272c<br>accents lift to L .76–.78, C .10–.14 · softs L .30–.32 C .04–.05</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+        <div style="padding:14px 16px;border-radius:12px;background:var(--accent-soft);color:var(--accent);"><b>Accent (green)</b><div style="font-size:14px;margin-top:2px;">Arcs · primary action · correct · progress · links</div></div>
+        <div style="padding:14px 16px;border-radius:12px;background:var(--violet-soft);color:var(--violet);"><b>Violet</b><div style="font-size:14px;margin-top:2px;">Angles · heights · selected choice · postulates</div></div>
+        <div style="padding:14px 16px;border-radius:12px;background:var(--orange-soft);color:var(--orange);"><b>Orange</b><div style="font-size:14px;margin-top:2px;">Horizontal change · lateral edges · bookmarks</div></div>
+        <div style="padding:14px 16px;border-radius:12px;background:var(--red-soft);color:var(--red);"><b>Red</b><div style="font-size:14px;margin-top:2px;">Incorrect answers · timer under one minute</div></div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:20px;">
+      <h2 style="font-family:var(--serif-display);font-weight:500;font-size:34px;margin:0;line-height:1.1;">Space, shape, line</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">
+        <div style="padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);">
+          <div style="font-variant:small-caps;letter-spacing:.08em;font-weight:600;font-size:13px;color:var(--muted);">Spacing scale</div>
+          <div style="display:flex;align-items:flex-end;gap:10px;margin-top:12px;">
+            <div style="width:4px;height:4px;background:var(--accent);"></div><div style="width:8px;height:8px;background:var(--accent);"></div><div style="width:12px;height:12px;background:var(--accent);"></div><div style="width:16px;height:16px;background:var(--accent);"></div><div style="width:20px;height:20px;background:var(--accent);"></div><div style="width:24px;height:24px;background:var(--accent);"></div><div style="width:32px;height:32px;background:var(--accent);"></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px;">4 · 8 · 12 · 16 · 20 · 24 · 32 — card padding 20, section gap 24, page gutter 24–28</div>
+        </div>
+        <div style="padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);">
+          <div style="font-variant:small-caps;letter-spacing:.08em;font-weight:600;font-size:13px;color:var(--muted);">Radius</div>
+          <div style="display:flex;align-items:flex-end;gap:10px;margin-top:12px;">
+            <div style="width:40px;height:40px;border:2px solid var(--ink);border-radius:8px;"></div><div style="width:40px;height:40px;border:2px solid var(--ink);border-radius:10px;"></div><div style="width:40px;height:40px;border:2px solid var(--ink);border-radius:12px;"></div><div style="width:40px;height:40px;border:2px solid var(--ink);border-radius:16px;"></div><div style="width:56px;height:28px;border:2px solid var(--ink);border-radius:999px;"></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px;">8 nav · 10 buttons/inputs · 12 tiles · 16 cards · pill chips</div>
+        </div>
+        <div style="padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);">
+          <div style="font-variant:small-caps;letter-spacing:.08em;font-weight:600;font-size:13px;color:var(--muted);">Diagram strokes</div>
+          <svg viewBox="0 0 240 70" style="width:100%;margin-top:10px;color:var(--ink);">
+            <line x1="10" y1="12" x2="230" y2="12" stroke="currentColor" stroke-width="2"></line>
+            <line x1="10" y1="30" x2="230" y2="30" stroke="var(--violet)" stroke-width="2.5"></line>
+            <line x1="10" y1="48" x2="230" y2="48" stroke="var(--accent)" stroke-width="7" stroke-linecap="round"></line>
+            <line x1="10" y1="64" x2="150" y2="64" stroke="var(--orange)" stroke-width="2.5" stroke-dasharray="6 4"></line>
+            <circle cx="200" cy="62" r="9" fill="var(--accent)" stroke="var(--panel)" stroke-width="2"></circle>
+          </svg>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px;">figure 2 · measured 2.5 · highlighted arc 7 · construction dashed 6 4 · handle r9 with panel ring</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:20px;">
+      <h2 style="font-family:var(--serif-display);font-weight:500;font-size:34px;margin:0;line-height:1.1;">Components</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
+        <div data-theme="light" style="background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button style="padding:9px 14px;border-radius:10px;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer;">Check</button>
+            <button style="padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:600;font-size:14px;cursor:pointer;">Try again</button>
+            <button style="padding:10px 16px;border-radius:10px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:14px;cursor:pointer;">✓ Completed</button>
+            <span style="font-size:13px;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600;">Central Angles</span>
+          </div>
+          <div style="display:flex;gap:6px;padding:4px;border-radius:10px;background:var(--soft);">
+            <span style="flex:1;padding:8px 10px;border-radius:8px;font-weight:700;font-size:13px;background:var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.12);text-align:center;">Right prism</span>
+            <span style="flex:1;padding:8px 10px;border-radius:8px;font-weight:700;font-size:13px;color:var(--muted);text-align:center;">Oblique prism</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:1px;">
+            <span style="display:flex;gap:8px;padding:7px 8px 7px 10px;border-radius:8px;font-size:14.5px;"><span style="width:16px;text-align:center;font-size:12px;color:var(--accent);font-weight:800;">✓</span>Parts of a Circle</span>
+            <span style="display:flex;gap:8px;padding:7px 8px 7px 10px;border-radius:8px;font-size:14.5px;background:var(--accent-soft);color:var(--accent);font-weight:700;"><span style="width:16px;"></span>Arcs and Inscribed Angles</span>
+            <span style="display:flex;gap:8px;padding:7px 8px 7px 10px;border-radius:8px;font-size:14.5px;"><span style="width:16px;text-align:center;font-size:12px;color:var(--muted);">≡</span><span style="flex:1;">Chapter Problems</span><span style="color:var(--orange);font-size:12px;">★</span></span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="padding:12px 14px;border-radius:12px;background:var(--accent-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Intercepted arc AC</div><div style="font-size:30px;font-weight:500;font-family:var(--serif-display);line-height:1.15;color:var(--accent);">130°</div></div>
+            <div style="padding:12px 14px;border-radius:12px;background:var(--violet-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Inscribed angle ABC</div><div style="font-size:30px;font-weight:500;font-family:var(--serif-display);line-height:1.15;color:var(--violet);">65°</div></div>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:600;"><span style="width:26px;height:26px;border-radius:8px;background:var(--soft);display:grid;place-items:center;color:var(--ink);font-family:var(--mono);">2</span><span>Multiple choice</span></div>
+            <div>Two inscribed angles intercept the same arc. Which statement is true?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <span style="padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--panel);font-size:15px;"><span style="font-weight:800;color:var(--muted);margin-right:8px;">A</span>Supplementary</span>
+              <span style="padding:10px 12px;border-radius:10px;border:2px solid var(--accent);background:var(--accent-soft);font-size:15px;"><span style="font-weight:800;color:var(--muted);margin-right:8px;">B</span>Congruent</span>
+              <span style="padding:10px 12px;border-radius:10px;border:2px solid var(--red);background:var(--red-soft);font-size:15px;"><span style="font-weight:800;color:var(--muted);margin-right:8px;">C</span>Add to 90°</span>
+              <span style="padding:10px 12px;border-radius:10px;border:2px solid var(--violet);background:var(--violet-soft);font-size:15px;"><span style="font-weight:800;color:var(--muted);margin-right:8px;">D</span>Selected</span>
+            </div>
+            <div style="padding:10px 14px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:15px;">Correct.</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="text" value="48" readOnly style="padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px;width:120px;">
+            <label style="display:flex;align-items:center;gap:10px;font-size:14px;"><input type="checkbox" checked readOnly>Show the right triangle</label>
+            <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">[ prev · ] next</span>
+          </div>
+        </div>
+        <div data-theme="dark" style="background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button style="padding:9px 14px;border-radius:10px;border:0;background:var(--accent);color:#141518;font-weight:700;font-size:14px;cursor:pointer;">Check</button>
+            <button style="padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:600;font-size:14px;cursor:pointer;">Try again</button>
+            <button style="padding:10px 16px;border-radius:10px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:14px;cursor:pointer;">✓ Completed</button>
+            <span style="font-size:13px;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600;">Central Angles</span>
+          </div>
+          <div style="display:flex;gap:6px;padding:4px;border-radius:10px;background:var(--soft);">
+            <span style="flex:1;padding:8px 10px;border-radius:8px;font-weight:700;font-size:13px;background:var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.3);text-align:center;">Right prism</span>
+            <span style="flex:1;padding:8px 10px;border-radius:8px;font-weight:700;font-size:13px;color:var(--muted);text-align:center;">Oblique prism</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:1px;">
+            <span style="display:flex;gap:8px;padding:7px 8px 7px 10px;border-radius:8px;font-size:14.5px;"><span style="width:16px;text-align:center;font-size:12px;color:var(--accent);font-weight:800;">✓</span>Parts of a Circle</span>
+            <span style="display:flex;gap:8px;padding:7px 8px 7px 10px;border-radius:8px;font-size:14.5px;background:var(--accent-soft);color:var(--accent);font-weight:700;"><span style="width:16px;"></span>Arcs and Inscribed Angles</span>
+            <span style="display:flex;gap:8px;padding:7px 8px 7px 10px;border-radius:8px;font-size:14.5px;"><span style="width:16px;text-align:center;font-size:12px;color:var(--muted);">≡</span><span style="flex:1;">Chapter Problems</span><span style="color:var(--orange);font-size:12px;">★</span></span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="padding:12px 14px;border-radius:12px;background:var(--accent-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Intercepted arc AC</div><div style="font-size:30px;font-weight:500;font-family:var(--serif-display);line-height:1.15;color:var(--accent);">130°</div></div>
+            <div style="padding:12px 14px;border-radius:12px;background:var(--violet-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Inscribed angle ABC</div><div style="font-size:30px;font-weight:500;font-family:var(--serif-display);line-height:1.15;color:var(--violet);">65°</div></div>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:600;"><span style="width:26px;height:26px;border-radius:8px;background:var(--soft);display:grid;place-items:center;color:var(--ink);font-family:var(--mono);">2</span><span>Multiple choice</span></div>
+            <div>Two inscribed angles intercept the same arc. Which statement is true?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <span style="padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--panel);font-size:15px;"><span style="font-weight:800;color:var(--muted);margin-right:8px;">A</span>Supplementary</span>
+              <span style="padding:10px 12px;border-radius:10px;border:2px solid var(--accent);background:var(--accent-soft);font-size:15px;"><span style="font-weight:800;color:var(--muted);margin-right:8px;">B</span>Congruent</span>
+              <span style="padding:10px 12px;border-radius:10px;border:2px solid var(--red);background:var(--red-soft);font-size:15px;"><span style="font-weight:800;color:var(--muted);margin-right:8px;">C</span>Add to 90°</span>
+              <span style="padding:10px 12px;border-radius:10px;border:2px solid var(--violet);background:var(--violet-soft);font-size:15px;"><span style="font-weight:800;color:var(--muted);margin-right:8px;">D</span>Selected</span>
+            </div>
+            <div style="padding:10px 14px;border-radius:10px;background:var(--red-soft);color:var(--red);font-weight:600;font-size:15px;">Not yet. Check your work and try again.</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="text" value="48" readOnly style="padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px;width:120px;">
+            <label style="display:flex;align-items:center;gap:10px;font-size:14px;"><input type="checkbox" checked readOnly>Show the right triangle</label>
+            <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">[ prev · ] next</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:20px;">
+      <h2 style="font-family:var(--serif-display);font-weight:500;font-size:34px;margin:0;line-height:1.1;">Writing (ASD-STE100)</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">
+        <div style="padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--panel);"><b>Procedural sentences</b> ≤ 20 words, command form. <i>Drag point B. Watch the angle.</i></div>
+        <div style="padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--panel);"><b>Descriptive sentences</b> ≤ 25 words, simple present. <i>An inscribed angle has its vertex on the circle.</i></div>
+        <div style="padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--panel);"><b>One topic per paragraph</b>, ≤ 6 sentences. Use the same word for the same thing. Keep articles.</div>
+        <div style="padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--panel);"><b>Approved verbs</b>: use, find, make sure, start, test. Not: utilize, ensure, commence, replenish.</div>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>

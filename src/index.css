@@ -1,0 +1,127 @@
+@import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
+
+/* ---- Tokens (copied from the prototype helmet <style>) ---- */
+:root{--serif-display:'Newsreader',Georgia,'Times New Roman',serif;--serif-text:'Source Serif 4',Georgia,'Times New Roman',serif;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--bg:#f7f5f0;--panel:#fffdf9;--ink:#1c1b18;--muted:#6b675f;--line:#e4e0d8;--soft:#efece5;--accent:oklch(0.47 0.09 165);--accent-soft:oklch(0.94 0.03 165);--violet:oklch(0.5 0.13 290);--violet-soft:oklch(0.94 0.03 290);--orange:oklch(0.53 0.13 50);--orange-soft:oklch(0.94 0.035 50);--red:oklch(0.52 0.16 25);--red-soft:oklch(0.94 0.03 25);--face1:#efece5;--face2:#e0dcd2;--face3:#cfcabd;}
+[data-theme="dark"]{--bg:#141518;--panel:#1c1e22;--ink:#ebe7df;--muted:#a09c94;--line:#2c2f35;--soft:#24272c;--accent:oklch(0.76 0.1 165);--accent-soft:oklch(0.3 0.04 165);--violet:oklch(0.78 0.11 290);--violet-soft:oklch(0.32 0.05 290);--orange:oklch(0.78 0.12 55);--orange-soft:oklch(0.32 0.05 55);--red:oklch(0.74 0.14 25);--red-soft:oklch(0.32 0.05 25);--face1:#2b2e34;--face2:#363a41;--face3:#43484f;}
+
+/* Additions: text on accent fills (dark accents are light, so dark ink is needed for contrast), the always-dark video chrome, and the backdrop. */
+:root{--on-accent:#fff;--video-bg:#0b0d12;--video-ink:#e9ecf3;--video-accent:#7ad0b4;--video-muted:#9fb3c8;--backdrop:rgba(0,0,0,.45);--shadow:rgba(0,0,0,.12);--sans:'Manrope',system-ui,sans-serif;}
+[data-theme="dark"]{--on-accent:#141518;--backdrop:rgba(0,0,0,.6);--shadow:rgba(0,0,0,.4);}
+
+/* ---- Tailwind theme: utilities resolve to the CSS variables above ---- */
+@theme inline {
+  --color-*: initial;
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-soft: var(--soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-orange: var(--orange);
+  --color-orange-soft: var(--orange-soft);
+  --color-red: var(--red);
+  --color-red-soft: var(--red-soft);
+  --color-face1: var(--face1);
+  --color-face2: var(--face2);
+  --color-face3: var(--face3);
+  --color-on-accent: var(--on-accent);
+  --color-video-bg: var(--video-bg);
+  --color-video-ink: var(--video-ink);
+  --color-video-accent: var(--video-accent);
+  --color-video-muted: var(--video-muted);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --font-display: var(--serif-display);
+  --font-text: var(--serif-text);
+  --font-mono: var(--mono);
+  --font-sans: var(--sans);
+  --animate-fade-up: fadeUp .25s ease;
+}
+
+/* ---- Base ---- */
+@layer base {
+html,body{margin:0;background:var(--bg);}
+body{font-family:var(--serif-text);color:var(--ink);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+code{font-family:var(--mono);font-size:.85em;background:var(--soft);padding:1px 5px;border-radius:4px;}
+a{color:var(--accent);} a:hover{color:var(--ink);}
+button{font-family:inherit;color:inherit;cursor:pointer;} input{font-family:inherit;}
+button:disabled{cursor:default;}
+input[type=range]{accent-color:var(--accent);width:100%;}
+input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px;flex-shrink:0;}
+.katex{font-size:1.06em;} .katex-display{margin:6px 0;}
+.katex-display > .katex{white-space:normal;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.fade-up{animation:fadeUp .25s ease;}
+:focus-visible{outline:2px solid var(--violet);outline-offset:2px;}
+::selection{background:var(--violet-soft);}
+h1,h2,h3,p,dl,dd,ol,ul{margin:0;}
+}
+
+/* Hit targets: at least 44px on touch. */
+@media (pointer: coarse) {
+  button, [role=button], input[type=search], input[type=text], a.btn { min-height: 44px; }
+  input[type=range] { height: 44px; }
+  label:has(> input[type=checkbox]) { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+/* ---- Shared components ---- */
+@layer components {
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+  .eyebrow { font-family: var(--serif-text); font-variant: small-caps; letter-spacing: .1em; color: var(--accent); font-size: 15px; font-weight: 600; }
+  .eyebrow-muted { font-family: var(--serif-text); font-variant: small-caps; letter-spacing: .1em; color: var(--muted); font-size: 14px; font-weight: 600; }
+  .page-title { font-family: var(--serif-display); font-size: clamp(32px, 5vw, 46px); line-height: 1.08; letter-spacing: -.01em; font-weight: 500; margin: 6px 0 14px; }
+  .h2 { font-family: var(--serif-display); font-weight: 500; font-size: 27px; letter-spacing: -.01em; line-height: 1.2; }
+  .h3 { font-family: var(--serif-display); font-weight: 500; font-size: 22px; line-height: 1.2; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink); line-height: 1.3; text-decoration: none; }
+  .btn:hover { background: var(--soft); }
+  .btn-primary { border: 0; background: var(--accent); color: var(--on-accent); font-weight: 700; }
+  .btn-primary:hover { background: var(--accent); opacity: .9; }
+  .btn-primary:disabled { opacity: .5; }
+  .btn-soft { padding: 8px 12px; border-radius: 9px; background: var(--soft); font-size: 13px; }
+  .btn-soft:hover { background: var(--accent-soft); }
+  .btn-icon { width: 40px; height: 40px; padding: 0; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+  .btn-icon:hover { background: var(--soft); }
+  .link-btn { background: none; border: 0; padding: 0; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-align: left; }
+  .link-btn:hover { color: var(--ink); }
+  .field { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 16px; }
+  .search { width: 100%; box-sizing: border-box; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font-size: 15px; }
+  .tile { padding: 12px 14px; border-radius: 12px; }
+  .tile-label { font-size: 13px; color: var(--muted); font-variant: small-caps; letter-spacing: .06em; font-weight: 600; }
+  .tile-value { font-size: 30px; font-weight: 500; font-family: var(--serif-display); line-height: 1.15; }
+  .seg { display: flex; gap: 6px; padding: 4px; border-radius: 10px; background: var(--soft); }
+  .seg > button { flex: 1; padding: 8px 12px; border-radius: 8px; border: 0; cursor: pointer; font-weight: 700; font-size: 13px; white-space: nowrap; background: transparent; color: var(--muted); }
+  .seg > button[aria-pressed="true"], .seg > button[aria-checked="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 3px var(--shadow); }
+  .nav-btn { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; border: 0; padding: 7px 8px 7px 10px; border-radius: 8px; cursor: pointer; font-size: 14.5px; line-height: 1.3; background: transparent; color: var(--ink); font-weight: 500; }
+  .nav-btn:hover { background: var(--soft); }
+  .nav-btn[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .progress { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .progress > div { height: 100%; background: var(--accent); transition: width .3s; }
+  .chip { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .choice { text-align: left; padding: 10px 12px; border-radius: 10px; font-size: 15px; color: var(--ink); border: 2px solid var(--line); background: var(--panel); cursor: pointer; }
+  .choice:not(:disabled):hover { border-color: var(--accent); }
+  .choice[data-state="selected"] { border-color: var(--violet); background: var(--violet-soft); }
+  .choice[data-state="right"] { border-color: var(--accent); background: var(--accent-soft); }
+  .choice[data-state="wrong"] { border-color: var(--red); background: var(--red-soft); }
+  .feedback { padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 15px; animation: fadeUp .25s ease; }
+  .feedback[data-tone="good"] { background: var(--accent-soft); color: var(--accent); }
+  .feedback[data-tone="bad"] { background: var(--red-soft); color: var(--red); }
+  .feedback[data-tone="neutral"] { background: var(--soft); color: var(--ink); }
+  .slider-label { font-size: 13px; display: block; }
+  .diagram-label { position: absolute; transform: translate(-50%, -50%); font-family: var(--serif-display); font-style: italic; font-weight: 500; white-space: nowrap; pointer-events: none; line-height: 1; }
+  .diagram-label[data-anchor="start"] { transform: translate(0, -50%); }
+  .diagram-label[data-anchor="end"] { transform: translate(-100%, -50%); }
+  .handle { cursor: grab; touch-action: none; }
+  .handle:active { cursor: grabbing; }
+  .handle:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+}
+
+/* Contrast note: light --orange is darkened from L .60 to L .53 and dark --muted lifted from #9c9890 to #a09c94
+   so small bold text on the soft tints reaches 4.5:1. All other tokens match the prototype. */

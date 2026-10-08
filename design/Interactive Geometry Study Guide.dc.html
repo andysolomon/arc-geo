@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<style>
+:root{--serif-display:'Newsreader',Georgia,'Times New Roman',serif;--serif-text:'Source Serif 4',Georgia,'Times New Roman',serif;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--bg:#f7f5f0;--panel:#fffdf9;--ink:#1c1b18;--muted:#6b675f;--line:#e4e0d8;--soft:#efece5;--accent:oklch(0.47 0.09 165);--accent-soft:oklch(0.94 0.03 165);--violet:oklch(0.5 0.13 290);--violet-soft:oklch(0.94 0.03 290);--orange:oklch(0.6 0.13 50);--orange-soft:oklch(0.94 0.035 50);--red:oklch(0.52 0.16 25);--red-soft:oklch(0.94 0.03 25);--face1:#efece5;--face2:#e0dcd2;--face3:#cfcabd;}
+[data-theme="dark"]{--bg:#141518;--panel:#1c1e22;--ink:#ebe7df;--muted:#9c9890;--line:#2c2f35;--soft:#24272c;--accent:oklch(0.76 0.1 165);--accent-soft:oklch(0.3 0.04 165);--violet:oklch(0.78 0.11 290);--violet-soft:oklch(0.32 0.05 290);--orange:oklch(0.78 0.12 55);--orange-soft:oklch(0.32 0.05 55);--red:oklch(0.74 0.14 25);--red-soft:oklch(0.32 0.05 25);--face1:#2b2e34;--face2:#363a41;--face3:#43484f;}
+html,body{margin:0;background:var(--bg);}
+body{font-family:var(--serif-text);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+code{font-family:var(--mono);font-size:.85em;background:var(--soft);padding:1px 5px;border-radius:4px;}
+a{color:var(--accent);} a:hover{color:var(--ink);}
+button{font-family:inherit;} input{font-family:inherit;}
+input[type=range]{accent-color:var(--accent);width:100%;}
+input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px;}
+.katex{font-size:1.06em;} .katex-display{margin:6px 0;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" data-screen-label="{{ screenLabel }}" style="min-height:100vh;background:var(--bg);color:var(--ink);display:flex;font-family:var(--serif-text);font-size:17px;line-height:1.6;">
+  <aside style="{{ sidebarStyle }}" aria-label="Table of contents">
+    <div style="width:300px;height:100%;overflow-y:auto;display:flex;flex-direction:column;box-sizing:border-box;">
+      <div style="padding:20px 18px 10px;">
+        <div style="font-family:var(--serif-display);font-style:italic;font-weight:500;font-size:28px;line-height:1.1;">Geometry</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;font-variant:small-caps;letter-spacing:.12em;">Interactive Study Guide</div>
+      </div>
+      <nav style="padding:0 10px 20px;display:flex;flex-direction:column;gap:2px;">
+        <button onClick="{{ goHome }}" style="{{ homeNavStyle }}" style-hover="background:var(--soft)">Overview</button>
+        <sc-for list="{{ navChapters }}" as="ch" hint-placeholder-count="3">
+          <div style="margin-top:12px;">
+            <button onClick="{{ ch.toggle }}" style="display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:none;border:0;padding:6px 8px;color:var(--ink);font-weight:700;font-size:13px;cursor:pointer;border-radius:8px;" style-hover="background:var(--soft)">
+              <span style="flex:1;">Chapter {{ ch.number }} · {{ ch.title }}</span>
+              <span style="font-size:11px;color:var(--muted);font-family:var(--mono);">{{ ch.doneCount }}/{{ ch.total }}</span>
+              <span style="font-size:11px;color:var(--muted);">{{ ch.chevron }}</span>
+            </button>
+            <sc-if value="{{ ch.open }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:1px;margin-top:2px;">
+                <sc-for list="{{ ch.sections }}" as="s" hint-placeholder-count="6">
+                  <button onClick="{{ s.go }}" style="{{ s.style }}" style-hover="background:var(--soft)" aria-current="{{ s.current }}">
+                    <span style="{{ s.markStyle }}">{{ s.mark }}</span>
+                    <span style="flex:1;min-width:0;">{{ s.title }}</span>
+                    <sc-if value="{{ s.bookmarked }}" hint-placeholder-val="{{ false }}"><span style="color:var(--orange);font-size:12px;">★</span></sc-if>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+        <div style="height:1px;background:var(--line);margin:14px 8px;"></div>
+        <button onClick="{{ goExam }}" style="{{ examNavStyle }}" style-hover="background:var(--soft)">Customized Full-Length Exam</button>
+        <button onClick="{{ goAppendix }}" style="{{ appendixNavStyle }}" style-hover="background:var(--soft)">Appendix · Postulates and Theorems</button>
+        <button onClick="{{ goGlossary }}" style="{{ glossaryNavStyle }}" style-hover="background:var(--soft)">Glossary / Index</button>
+      </nav>
+    </div>
+  </aside>
+  <sc-if value="{{ showBackdrop }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeSidebar }}" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:30;"></div>
+  </sc-if>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+    <header style="display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:20;">
+      <button onClick="{{ toggleSidebar }}" aria-label="Toggle table of contents" style="width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;display:grid;place-items:center;" style-hover="background:var(--soft)">
+        <svg width="18" height="14" viewBox="0 0 18 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="2" x2="17" y2="2"></line><line x1="1" y1="7" x2="17" y2="7"></line><line x1="1" y1="12" x2="17" y2="12"></line></svg>
+      </button>
+      <div style="font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ crumb }}</div>
+      <div style="flex:1;"></div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);white-space:nowrap;" title="Lessons completed">
+        <div style="width:72px;height:6px;border-radius:3px;background:var(--line);overflow:hidden;"><div style="{{ progressBarStyle }}"></div></div>
+        <span style="font-family:var(--mono);font-size:12px;">{{ progressPct }}%</span>
+      </div>
+      <sc-if value="{{ isSection }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toggleBookmark }}" aria-pressed="{{ bookmarked }}" style="{{ bookmarkBtnStyle }}" title="Bookmark this section" style-hover="background:var(--soft)">{{ bookmarkLabel }}</button>
+      </sc-if>
+      <button onClick="{{ toggleTheme }}" aria-label="Toggle dark mode" style="height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-size:13px;font-weight:600;" style-hover="background:var(--soft)">{{ themeLabel }}</button>
+    </header>
+
+    <main style="padding:32px 24px 96px;max-width:1000px;width:100%;margin:0 auto;box-sizing:border-box;">
+
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+        <div style="font-family:var(--serif-text);font-variant:small-caps;letter-spacing:.1em;color:var(--accent);font-size:15px;font-weight:600;">Self-paced textbook</div>
+        <h1 style="font-size:clamp(36px,5.5vw,54px);line-height:1.05;margin:6px 0 16px;letter-spacing:-.01em;font-weight:500;font-family:var(--serif-display);">Interactive Geometry Study Guide</h1>
+        <p style="max-width:62ch;color:var(--muted);margin:0 0 28px;text-wrap:pretty;">Read each lesson. Move the points in each diagram. Answer the questions. The guide saves your progress on this device.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+          <sc-for list="{{ homeChapters }}" as="hc" hint-placeholder-count="3">
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;">
+              <div style="font-family:var(--serif-text);font-variant:small-caps;letter-spacing:.1em;color:var(--muted);font-size:14px;font-weight:600;">Chapter {{ hc.number }}</div>
+              <div style="font-size:28px;font-weight:500;font-family:var(--serif-display);line-height:1.1;">{{ hc.title }}</div>
+              <div style="font-size:13px;color:var(--muted);">{{ hc.lessonCount }} lessons · {{ hc.doneCount }} done</div>
+              <div style="height:6px;border-radius:3px;background:var(--line);overflow:hidden;"><div style="{{ hc.barStyle }}"></div></div>
+              <button onClick="{{ hc.go }}" style="margin-top:6px;align-self:flex-start;padding:9px 14px;border-radius:10px;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer;" style-hover="opacity:.9">{{ hc.cta }}</button>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:28px;">
+          <button onClick="{{ goExam }}" style="text-align:left;padding:16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;" style-hover="background:var(--soft)"><div style="font-weight:700;">Full-Length Exam</div><div style="font-size:13px;color:var(--muted);">Pick chapters, count, and a timer.</div></button>
+          <button onClick="{{ goAppendix }}" style="text-align:left;padding:16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;" style-hover="background:var(--soft)"><div style="font-weight:700;">Postulates and Theorems</div><div style="font-size:13px;color:var(--muted);">Search all {{ theoremCount }} statements.</div></button>
+          <button onClick="{{ goGlossary }}" style="text-align:left;padding:16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;" style-hover="background:var(--soft)"><div style="font-weight:700;">Glossary</div><div style="font-size:13px;color:var(--muted);">{{ glossaryCount }} terms with links to lessons.</div></button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLesson }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:var(--serif-text);font-variant:small-caps;letter-spacing:.1em;color:var(--accent);font-size:15px;font-weight:600;">Chapter {{ secChapterNum }} · Section {{ secIndex }}</div>
+        <h1 style="font-size:clamp(32px,5vw,46px);line-height:1.08;margin:6px 0 14px;letter-spacing:-.01em;font-weight:500;font-family:var(--serif-display);">{{ secTitle }}</h1>
+        <sc-if value="{{ hasParts }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
+            <sc-for list="{{ secParts }}" as="part" hint-placeholder-count="2">
+              <span style="font-size:13px;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600;">{{ part.label }}</span>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isStub }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px;">
+            <sc-if value="{{ hasSummary }}" hint-placeholder-val="{{ true }}">
+              <p style="margin:0;max-width:65ch;text-wrap:pretty;">{{ secSummaryNode }}</p>
+              <div style="padding:14px 16px;border-radius:12px;background:var(--soft);font-size:18px;overflow-x:auto;">{{ secFormulaNode }}</div>
+            </sc-if>
+            <p style="margin:0;font-size:14px;color:var(--muted);">The full lesson, diagram, and video for this section are not written yet. Add them in <code>data/chapters.js</code> under <code>lessons</code>.</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isBuilt }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:68ch;display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+            <sc-for list="{{ intro }}" as="p" hint-placeholder-count="3">
+              <p style="margin:0;text-wrap:pretty;">{{ p.node }}</p>
+            </sc-for>
+          </div>
+
+          <section style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:24px;">
+            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+              <div style="font-weight:500;font-size:22px;font-family:var(--serif-display);">Interactive diagram</div>
+              <div style="font-size:13px;color:var(--muted);">{{ diagramHint }}</div>
+            </div>
+
+            <sc-if value="{{ isInscribed }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;align-items:start;">
+                <div style="position:relative;width:100%;max-width:420px;margin:0 auto;font-family:var(--serif-display);font-style:italic;">
+                <sc-for list="{{ insc.labels }}" as="lb" hint-placeholder-count="0"><div style="{{ lb.style }}">{{ lb.text }}</div></sc-for>
+                <svg ref="{{ inscRef }}" viewBox="0 0 360 360" style="width:100%;touch-action:none;display:block;color:var(--ink);font-family:var(--serif-display);font-style:italic;" aria-label="Circle with inscribed angle ABC">
+                  <circle cx="180" cy="180" r="140" fill="none" stroke="currentColor" stroke-width="2"></circle>
+                  <path d="{{ insc.arcPath }}" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round"></path>
+                  <sc-if value="{{ showCentral }}" hint-placeholder-val="{{ false }}">
+                    <line x1="180" y1="180" x2="{{ insc.ax }}" y2="{{ insc.ay }}" stroke="var(--accent)" stroke-width="2" stroke-dasharray="5 5"></line>
+                    <line x1="180" y1="180" x2="{{ insc.cx }}" y2="{{ insc.cy }}" stroke="var(--accent)" stroke-width="2" stroke-dasharray="5 5"></line>
+                    <path d="{{ insc.centralMarker }}" fill="none" stroke="var(--accent)" stroke-width="2"></path>
+                    <circle cx="180" cy="180" r="3" fill="currentColor"></circle>
+                  </sc-if>
+                  <line x1="{{ insc.bx }}" y1="{{ insc.by }}" x2="{{ insc.ax }}" y2="{{ insc.ay }}" stroke="var(--violet)" stroke-width="2.5"></line>
+                  <line x1="{{ insc.bx }}" y1="{{ insc.by }}" x2="{{ insc.cx }}" y2="{{ insc.cy }}" stroke="var(--violet)" stroke-width="2.5"></line>
+                  <path d="{{ insc.angleMarker }}" fill="none" stroke="var(--violet)" stroke-width="2.5"></path>
+                  <circle cx="{{ insc.ax }}" cy="{{ insc.ay }}" r="9" fill="var(--accent)" stroke="var(--panel)" stroke-width="2" style="cursor:grab" onPointerDown="{{ dragA }}" tabIndex="0" role="slider" aria-label="Point A, drag or use arrow keys" onKeyDown="{{ keyA }}"></circle>
+                  <circle cx="{{ insc.cx }}" cy="{{ insc.cy }}" r="9" fill="var(--accent)" stroke="var(--panel)" stroke-width="2" style="cursor:grab" onPointerDown="{{ dragC }}" tabIndex="0" role="slider" aria-label="Point C, drag or use arrow keys" onKeyDown="{{ keyC }}"></circle>
+                  <circle cx="{{ insc.bx }}" cy="{{ insc.by }}" r="9" fill="var(--violet)" stroke="var(--panel)" stroke-width="2" style="cursor:grab" onPointerDown="{{ dragB }}" tabIndex="0" role="slider" aria-label="Point B, drag or use arrow keys" onKeyDown="{{ keyB }}"></circle>
+                  <text x="{{ insc.alx }}" y="{{ insc.aly }}" fill="currentColor" font-size="17" text-anchor="middle" dominant-baseline="middle">A</text>
+                  <text x="{{ insc.blx }}" y="{{ insc.bly }}" fill="currentColor" font-size="17" text-anchor="middle" dominant-baseline="middle">B</text>
+                  <text x="{{ insc.clx }}" y="{{ insc.cly }}" fill="currentColor" font-size="17" text-anchor="middle" dominant-baseline="middle">C</text>
+                </svg>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div style="padding:12px 14px;border-radius:12px;background:var(--accent-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Intercepted arc AC</div><div style="font-size:30px;font-weight:500;font-family:var(--serif-display);line-height:1.15;color:var(--accent);">{{ insc.arcLabel }}</div></div>
+                    <div style="padding:12px 14px;border-radius:12px;background:var(--violet-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Inscribed angle ABC</div><div style="font-size:30px;font-weight:500;font-family:var(--serif-display);line-height:1.15;color:var(--violet);">{{ insc.angleLabel }}</div></div>
+                  </div>
+                  <div style="font-size:18px;padding:12px 14px;border-radius:12px;background:var(--soft);">{{ insc.equation }}</div>
+                  <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;"><input type="checkbox" checked="{{ showCentral }}" onChange="{{ toggleCentral }}">Show the central angle AOC. It equals the arc.</label>
+                  <p style="margin:0;font-size:13px;color:var(--muted);">Drag A, B, or C. Move B to the other side of the circle. The intercepted arc changes to the other arc.</p>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isPrism }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;align-items:start;">
+                <div style="position:relative;width:100%;max-width:460px;margin:0 auto;font-family:var(--serif-display);font-style:italic;">
+                <sc-for list="{{ pr.labels }}" as="lb" hint-placeholder-count="0"><div style="{{ lb.style }}">{{ lb.text }}</div></sc-for>
+                <svg viewBox="0 0 420 340" style="width:100%;display:block;color:var(--ink);" aria-label="Rectangular prism">
+                  <sc-for list="{{ prismSlices }}" as="sl" hint-placeholder-count="0">
+                    <polygon points="{{ sl.top }}" fill="var(--face1)" stroke="currentColor" stroke-width="1.2"></polygon>
+                    <polygon points="{{ sl.right }}" fill="var(--face3)" stroke="currentColor" stroke-width="1.2"></polygon>
+                    <polygon points="{{ sl.front }}" fill="var(--face2)" stroke="currentColor" stroke-width="1.2"></polygon>
+                  </sc-for>
+                  <sc-if value="{{ prismWhole }}" hint-placeholder-val="{{ true }}">
+                    <polygon points="{{ pr.top }}" fill="var(--face1)" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></polygon>
+                    <polygon points="{{ pr.right }}" fill="var(--face3)" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></polygon>
+                    <polygon points="{{ pr.front }}" fill="var(--face2)" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></polygon>
+                  </sc-if>
+                  <polygon points="{{ pr.base }}" fill="var(--accent)" fill-opacity="0.25" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4"></polygon>
+                  <line x1="{{ pr.hx1 }}" y1="{{ pr.hy1 }}" x2="{{ pr.hx2 }}" y2="{{ pr.hy2 }}" stroke="var(--violet)" stroke-width="2.5" stroke-dasharray="6 4"></line>
+                  <sc-if value="{{ prism.oblique }}" hint-placeholder-val="{{ false }}">
+                    <line x1="{{ pr.ex1 }}" y1="{{ pr.ey1 }}" x2="{{ pr.ex2 }}" y2="{{ pr.ey2 }}" stroke="var(--orange)" stroke-width="2.5"></line>
+                  </sc-if>
+                </svg>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div style="display:flex;gap:6px;padding:4px;border-radius:10px;background:var(--soft);">
+                    <button onClick="{{ setRight }}" style="{{ rightBtnStyle }}">Right prism</button>
+                    <button onClick="{{ setOblique }}" style="{{ obliqueBtnStyle }}">Oblique prism</button>
+                  </div>
+                  <label style="font-size:13px;display:block;"><div style="display:flex;justify-content:space-between;"><span>Base width</span><b>{{ prism.w }}</b></div><input type="range" min="2" max="8" step="1" value="{{ prism.w }}" onChange="{{ setW }}"></label>
+                  <label style="font-size:13px;display:block;"><div style="display:flex;justify-content:space-between;"><span>Base depth</span><b>{{ prism.d }}</b></div><input type="range" min="1" max="5" step="1" value="{{ prism.d }}" onChange="{{ setD }}"></label>
+                  <label style="font-size:13px;display:block;"><div style="display:flex;justify-content:space-between;"><span>Height</span><b>{{ prism.h }}</b></div><input type="range" min="1" max="7" step="1" value="{{ prism.h }}" onChange="{{ setH }}"></label>
+                  <sc-if value="{{ prism.oblique }}" hint-placeholder-val="{{ false }}">
+                    <label style="font-size:13px;display:block;"><div style="display:flex;justify-content:space-between;"><span>Lean</span><b>{{ pr.leanLabel }}</b></div><input type="range" min="0.5" max="3" step="0.5" value="{{ prism.lean }}" onChange="{{ setLean }}"></label>
+                    <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;"><input type="checkbox" checked="{{ prism.slices }}" onChange="{{ toggleSlices }}">Show slices (Cavalieri's principle)</label>
+                  </sc-if>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div style="padding:12px 14px;border-radius:12px;background:var(--accent-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Volume V = Bh</div><div style="font-size:28px;font-weight:500;font-family:var(--serif-display);line-height:1.15;color:var(--accent);">{{ pr.V }}</div></div>
+                    <div style="padding:12px 14px;border-radius:12px;background:var(--soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">{{ pr.areaLabel }}</div><div style="font-size:28px;font-weight:500;font-family:var(--serif-display);line-height:1.15;">{{ pr.areaValue }}</div></div>
+                  </div>
+                  <div style="font-size:17px;padding:12px 14px;border-radius:12px;background:var(--soft);">{{ pr.equation }}</div>
+                  <p style="margin:0;font-size:13px;color:var(--muted);">{{ pr.note }}</p>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isDistance }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;align-items:start;">
+                <div style="position:relative;width:100%;max-width:440px;margin:0 auto;font-family:var(--serif-display);font-style:italic;">
+                <sc-for list="{{ dd.labels }}" as="lb" hint-placeholder-count="0"><div style="{{ lb.style }}">{{ lb.text }}</div></sc-for>
+                <svg ref="{{ distRef }}" viewBox="0 0 400 400" style="width:100%;touch-action:none;display:block;color:var(--ink);font-family:var(--serif-display);font-style:italic;" aria-label="Coordinate grid with points A and B">
+                  <sc-for list="{{ gridLines }}" as="g" hint-placeholder-count="0">
+                    <line x1="{{ g.x1 }}" y1="{{ g.y1 }}" x2="{{ g.x2 }}" y2="{{ g.y2 }}" stroke="var(--line)" stroke-width="1"></line>
+                  </sc-for>
+                  <line x1="0" y1="200" x2="400" y2="200" stroke="currentColor" stroke-width="1.5"></line>
+                  <line x1="200" y1="0" x2="200" y2="400" stroke="currentColor" stroke-width="1.5"></line>
+                  <text x="392" y="194" font-size="13" fill="currentColor" text-anchor="end">x</text>
+                  <text x="207" y="12" font-size="13" fill="currentColor">y</text>
+                  <sc-if value="{{ dist.showLegs }}" hint-placeholder-val="{{ true }}">
+                    <line x1="{{ dd.ax }}" y1="{{ dd.ay }}" x2="{{ dd.bx }}" y2="{{ dd.ay }}" stroke="var(--orange)" stroke-width="2.5" stroke-dasharray="6 4"></line>
+                    <line x1="{{ dd.bx }}" y1="{{ dd.ay }}" x2="{{ dd.bx }}" y2="{{ dd.by }}" stroke="var(--violet)" stroke-width="2.5" stroke-dasharray="6 4"></line>
+                    <path d="{{ dd.rightAngle }}" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+                  </sc-if>
+                  <line x1="{{ dd.ax }}" y1="{{ dd.ay }}" x2="{{ dd.bx }}" y2="{{ dd.by }}" stroke="var(--accent)" stroke-width="3"></line>
+                  <circle cx="{{ dd.ax }}" cy="{{ dd.ay }}" r="9" fill="var(--accent)" stroke="var(--panel)" stroke-width="2" style="cursor:grab" onPointerDown="{{ dragPA }}" tabIndex="0" role="slider" aria-label="Point A, drag or use arrow keys" onKeyDown="{{ keyPA }}"></circle>
+                  <circle cx="{{ dd.bx }}" cy="{{ dd.by }}" r="9" fill="var(--accent)" stroke="var(--panel)" stroke-width="2" style="cursor:grab" onPointerDown="{{ dragPB }}" tabIndex="0" role="slider" aria-label="Point B, drag or use arrow keys" onKeyDown="{{ keyPB }}"></circle>
+                </svg>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div style="padding:12px 14px;border-radius:12px;background:var(--orange-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Δx = x₂ − x₁</div><div style="font-size:28px;font-weight:500;font-family:var(--serif-display);line-height:1.15;color:var(--orange);">{{ dd.dx }}</div></div>
+                    <div style="padding:12px 14px;border-radius:12px;background:var(--violet-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Δy = y₂ − y₁</div><div style="font-size:28px;font-weight:500;font-family:var(--serif-display);line-height:1.15;color:var(--violet);">{{ dd.dy }}</div></div>
+                  </div>
+                  <div style="padding:12px 14px;border-radius:12px;background:var(--accent-soft);"><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.06em;font-weight:600;">Distance</div><div style="font-size:18px;">{{ dd.equation }}</div></div>
+                  <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;"><input type="checkbox" checked="{{ dist.showLegs }}" onChange="{{ toggleLegs }}">Show the right triangle</label>
+                  <div style="font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px;">
+                    <div>Midpoint: <b style="color:var(--ink);">{{ dd.mid }}</b></div>
+                    <div>Slope: <b style="color:var(--ink);">{{ dd.slope }}</b></div>
+                  </div>
+                  <p style="margin:0;font-size:13px;color:var(--muted);">Drag A or B. Points snap to whole numbers.</p>
+                </div>
+              </div>
+            </sc-if>
+          </section>
+
+          <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px;">
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;">
+              <div style="font-weight:500;font-size:22px;font-family:var(--serif-display);margin-bottom:10px;">Definitions</div>
+              <dl style="margin:0;display:flex;flex-direction:column;gap:10px;">
+                <sc-for list="{{ definitions }}" as="d" hint-placeholder-count="2">
+                  <div><dt style="font-weight:700;">{{ d.term }}</dt><dd style="margin:0;color:var(--muted);font-size:15px;">{{ d.node }}</dd></div>
+                </sc-for>
+              </dl>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;">
+              <div style="font-weight:500;font-size:22px;font-family:var(--serif-display);margin-bottom:10px;">Formulas</div>
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <sc-for list="{{ formulas }}" as="f" hint-placeholder-count="2">
+                  <div><div style="font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.08em;font-weight:600;">{{ f.label }}</div><div style="font-size:18px;overflow-x:auto;">{{ f.node }}</div></div>
+                </sc-for>
+              </div>
+            </div>
+          </section>
+
+          <sc-if value="{{ showVideo }}" hint-placeholder-val="{{ true }}">
+          <section style="background:#0b0d12;border-radius:16px;overflow:hidden;margin-bottom:24px;color:#e9ecf3;">
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;">
+              <div style="font-family:var(--serif-text);font-variant:small-caps;letter-spacing:.1em;color:#7ad0b4;font-size:14px;font-weight:600;">Video explainer</div>
+              <div style="font-weight:700;">{{ videoTitle }}</div>
+              <div style="flex:1;"></div>
+              <a href="{{ videoSrc }}" target="_blank" rel="noopener" style="font-size:13px;color:#9fb3c8;">Open full size ↗</a>
+            </div>
+            <div style="position:relative;aspect-ratio:16/9;background:#0b0d12;">
+              <iframe src="{{ videoSrc }}" title="{{ videoTitle }}" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allow="fullscreen"></iframe>
+            </div>
+          </section>
+          </sc-if>
+
+          <section style="margin-bottom:24px;">
+            <div style="font-weight:500;font-size:27px;font-family:var(--serif-display);margin-bottom:12px;letter-spacing:-.01em;">Worked examples</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <sc-for list="{{ examples }}" as="ex" hint-placeholder-count="3">
+                <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;">
+                  <div style="font-weight:500;color:var(--accent);font-size:20px;font-family:var(--serif-display);margin-bottom:4px;">{{ ex.title }}</div>
+                  <div style="margin-bottom:10px;">{{ ex.givenNode }}</div>
+                  <button onClick="{{ ex.toggle }}" style="padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:var(--accent-soft)">{{ ex.btn }}</button>
+                  <sc-if value="{{ ex.open }}" hint-placeholder-val="{{ false }}">
+                    <ol style="margin:12px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:6px;animation:fadeUp .25s ease;">
+                      <sc-for list="{{ ex.steps }}" as="st" hint-placeholder-count="2"><li>{{ st.node }}</li></sc-for>
+                    </ol>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isProblems }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:var(--serif-text);font-variant:small-caps;letter-spacing:.1em;color:var(--accent);font-size:15px;font-weight:600;">Chapter {{ secChapterNum }}</div>
+        <h1 style="font-size:clamp(32px,5vw,46px);line-height:1.08;margin:6px 0 14px;letter-spacing:-.01em;font-weight:500;font-family:var(--serif-display);">{{ secTitle }}</h1>
+      </sc-if>
+
+      <sc-if value="{{ hasQList }}" hint-placeholder-val="{{ false }}">
+        <section style="margin-bottom:24px;">
+          <div style="font-weight:500;font-size:27px;font-family:var(--serif-display);letter-spacing:-.01em;">{{ qlistTitle }}</div>
+          <p style="margin:4px 0 14px;color:var(--muted);font-size:14px;">{{ qlistNote }}</p>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <sc-for list="{{ qlist }}" as="q" hint-placeholder-count="3">
+              <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:600;">
+                  <span style="width:26px;height:26px;border-radius:8px;background:var(--soft);display:grid;place-items:center;color:var(--ink);font-family:var(--mono);font-size:12px;">{{ q.num }}</span>
+                  <span>{{ q.typeLabel }}</span>
+                  <sc-if value="{{ q.showChapter }}" hint-placeholder-val="{{ false }}"><span>· {{ q.chapterLabel }}</span></sc-if>
+                </div>
+                <div style="font-size:17px;">{{ q.promptNode }}</div>
+                <sc-if value="{{ q.hasFigure }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:center;">{{ q.figure }}</div></sc-if>
+                <sc-if value="{{ q.isMC }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
+                    <sc-for list="{{ q.choices }}" as="ch" hint-placeholder-count="4">
+                      <button onClick="{{ ch.select }}" disabled="{{ q.locked }}" style="{{ ch.style }}" style-hover="border-color:var(--accent)" aria-pressed="{{ ch.selected }}"><span style="font-weight:800;color:var(--muted);margin-right:8px;">{{ ch.letter }}</span>{{ ch.node }}</button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ q.isNumeric }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <input type="text" inputMode="decimal" value="{{ q.inputValue }}" onChange="{{ q.onInput }}" onKeyDown="{{ q.onKey }}" disabled="{{ q.locked }}" placeholder="Your answer" aria-label="Numeric answer" style="padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px;width:160px;" style-focus="outline:2px solid var(--accent);outline-offset:1px">
+                    <span style="color:var(--muted);font-size:14px;">{{ q.unit }}</span>
+                  </div>
+                </sc-if>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <sc-if value="{{ q.showCheck }}" hint-placeholder-val="{{ false }}"><button onClick="{{ q.check }}" style="padding:9px 14px;border-radius:10px;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer;" style-hover="opacity:.9">Check</button></sc-if>
+                  <sc-if value="{{ q.showRetry }}" hint-placeholder-val="{{ false }}"><button onClick="{{ q.retry }}" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:600;font-size:14px;cursor:pointer;" style-hover="background:var(--soft)">Try again</button></sc-if>
+                  <sc-if value="{{ q.showReveal }}" hint-placeholder-val="{{ false }}"><button onClick="{{ q.reveal }}" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:600;font-size:14px;cursor:pointer;" style-hover="background:var(--soft)">{{ q.revealLabel }}</button></sc-if>
+                </div>
+                <sc-if value="{{ q.hasFeedback }}" hint-placeholder-val="{{ false }}"><div style="{{ q.feedbackStyle }}">{{ q.feedbackNode }}</div></sc-if>
+                <sc-if value="{{ q.showSolution }}" hint-placeholder-val="{{ false }}">
+                  <div style="border-top:1px dashed var(--line);padding-top:12px;animation:fadeUp .25s ease;">
+                    <div style="font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.08em;font-variant:small-caps;">Step-by-step solution</div>
+                    <ol style="margin:6px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:4px;">
+                      <sc-for list="{{ q.solution }}" as="st" hint-placeholder-count="2"><li>{{ st.node }}</li></sc-for>
+                    </ol>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ isBuilt }}" hint-placeholder-val="{{ false }}">
+        <section style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:24px;">
+          <div style="font-weight:500;font-size:22px;font-family:var(--serif-display);margin-bottom:8px;">Postulates and theorems used here</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <sc-for list="{{ lessonTheorems }}" as="t" hint-placeholder-count="3">
+              <button onClick="{{ t.go }}" style="text-align:left;display:flex;gap:10px;align-items:baseline;background:none;border:0;padding:6px 8px;border-radius:8px;color:var(--ink);cursor:pointer;font-size:15px;" style-hover="background:var(--soft)"><span style="font-weight:800;color:var(--accent);font-size:13px;white-space:nowrap;">{{ t.kind }} {{ t.id }}</span><span><b>{{ t.name }}.</b> {{ t.node }}</span></button>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ isSection }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px;">
+          <button onClick="{{ toggleComplete }}" aria-pressed="{{ completed }}" style="{{ completeBtnStyle }}" style-hover="opacity:.9">{{ completeLabel }}</button>
+          <div style="flex:1;"></div>
+          <sc-if value="{{ hasPrev }}" hint-placeholder-val="{{ false }}"><button onClick="{{ goPrev }}" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:14px;cursor:pointer;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" style-hover="background:var(--soft)">← {{ prevTitle }}</button></sc-if>
+          <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ false }}"><button onClick="{{ goNext }}" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:14px;cursor:pointer;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" style-hover="background:var(--soft)">{{ nextTitle }} →</button></sc-if>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:10px;font-family:var(--mono);">[ previous section · ] next section</p>
+      </sc-if>
+
+      <sc-if value="{{ isExam }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:var(--serif-text);font-variant:small-caps;letter-spacing:.1em;color:var(--accent);font-size:15px;font-weight:600;">Assessment</div>
+        <h1 style="font-size:clamp(32px,5vw,46px);line-height:1.08;margin:6px 0 14px;letter-spacing:-.01em;font-weight:500;font-family:var(--serif-display);">Customized Full-Length Exam</h1>
+        <sc-if value="{{ examSetup }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start;">
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;">
+              <div><div style="font-weight:700;margin-bottom:8px;">Chapters</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <sc-for list="{{ examChapterOpts }}" as="ec" hint-placeholder-count="3">
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;"><input type="checkbox" checked="{{ ec.on }}" onChange="{{ ec.toggle }}"><span>Chapter {{ ec.number }} · {{ ec.title }}</span><span style="color:var(--muted);font-size:12px;">{{ ec.count }} in bank</span></label>
+                  </sc-for>
+                </div>
+              </div>
+              <div><div style="font-weight:700;margin-bottom:8px;">Number of questions</div>
+                <div style="display:flex;gap:6px;padding:4px;border-radius:10px;background:var(--soft);">
+                  <sc-for list="{{ examCountOpts }}" as="co" hint-placeholder-count="4"><button onClick="{{ co.pick }}" style="{{ co.style }}">{{ co.n }}</button></sc-for>
+                </div>
+                <div style="font-size:12px;color:var(--muted);margin-top:6px;">{{ examAvailable }} questions match your chapters.</div>
+              </div>
+              <div>
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;"><input type="checkbox" checked="{{ exam.timer }}" onChange="{{ toggleTimer }}">Timer</label>
+                <sc-if value="{{ exam.timer }}" hint-placeholder-val="{{ false }}">
+                  <label style="font-size:13px;display:block;margin-top:8px;"><div style="display:flex;justify-content:space-between;"><span>Minutes</span><b>{{ exam.minutes }}</b></div><input type="range" min="5" max="60" step="5" value="{{ exam.minutes }}" onChange="{{ setMinutes }}"></label>
+                </sc-if>
+              </div>
+              <button onClick="{{ startExam }}" disabled="{{ examStartDisabled }}" style="padding:12px 16px;border-radius:12px;border:0;background:var(--accent);color:#fff;font-weight:800;font-size:15px;cursor:pointer;" style-hover="opacity:.9">Start exam</button>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;">
+              <div style="font-weight:700;margin-bottom:8px;">Past scores</div>
+              <sc-if value="{{ hasScores }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <sc-for list="{{ scoreRows }}" as="sr" hint-placeholder-count="2">
+                    <div style="display:flex;justify-content:space-between;gap:10px;font-size:14px;border-bottom:1px solid var(--line);padding-bottom:6px;"><span style="color:var(--muted);">{{ sr.date }}</span><span>{{ sr.chapters }}</span><b>{{ sr.score }}</b></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ noScores }}" hint-placeholder-val="{{ true }}"><p style="margin:0;color:var(--muted);font-size:14px;">No exams taken yet.</p></sc-if>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ examRunning }}" hint-placeholder-val="{{ false }}">
+          <div style="position:sticky;top:61px;z-index:10;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:var(--panel);border:1px solid var(--line);margin-bottom:16px;">
+            <span style="font-size:14px;color:var(--muted);">{{ examAnswered }} of {{ examTotal }} answered</span>
+            <div style="flex:1;"></div>
+            <sc-if value="{{ exam.timer }}" hint-placeholder-val="{{ false }}"><span style="{{ timerStyle }}">{{ timerLabel }}</span></sc-if>
+            <button onClick="{{ submitExam }}" style="padding:9px 14px;border-radius:10px;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer;" style-hover="opacity:.9">Submit</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ examDone }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px;">
+            <div style="background:var(--accent);color:#fff;border-radius:16px;padding:20px;"><div style="font-size:13px;opacity:.85;font-weight:600;">Score</div><div style="font-size:52px;font-weight:500;font-family:var(--serif-display);line-height:1;">{{ examScorePct }}%</div><div style="font-size:14px;margin-top:6px;">{{ examCorrect }} of {{ examTotal }} correct</div></div>
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;">
+              <div style="font-weight:700;">Per-chapter breakdown</div>
+              <sc-for list="{{ examBreakdown }}" as="eb" hint-placeholder-count="3">
+                <div><div style="display:flex;justify-content:space-between;font-size:13px;"><span>Chapter {{ eb.number }} · {{ eb.title }}</span><b>{{ eb.correct }}/{{ eb.total }}</b></div><div style="height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:4px;"><div style="{{ eb.barStyle }}"></div></div></div>
+              </sc-for>
+              <button onClick="{{ resetExam }}" style="margin-top:6px;align-self:flex-start;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:600;font-size:14px;cursor:pointer;" style-hover="background:var(--soft)">New exam</button>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isAppendix }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:var(--serif-text);font-variant:small-caps;letter-spacing:.1em;color:var(--accent);font-size:15px;font-weight:600;">Appendix</div>
+        <h1 style="font-size:clamp(32px,5vw,46px);line-height:1.08;margin:6px 0 18px;letter-spacing:-.01em;font-weight:500;font-family:var(--serif-display);">Postulates and Theorems</h1>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;">
+          <input type="search" value="{{ appendixQuery }}" onChange="{{ setAppendixQuery }}" placeholder="Search by name, number, or words" aria-label="Search theorems" style="flex:1;min-width:220px;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:15px;" style-focus="outline:2px solid var(--accent);outline-offset:1px">
+          <div style="display:flex;gap:6px;padding:4px;border-radius:10px;background:var(--soft);flex-shrink:0;">
+            <sc-for list="{{ appendixFilters }}" as="af" hint-placeholder-count="4"><button onClick="{{ af.pick }}" style="{{ af.style }}">{{ af.label }}</button></sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:22px;">
+          <sc-for list="{{ appendixGroups }}" as="ag" hint-placeholder-count="3">
+            <div>
+              <div style="font-weight:500;font-size:22px;font-family:var(--serif-display);margin-bottom:8px;">Chapter {{ ag.number }} · {{ ag.title }}</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <sc-for list="{{ ag.items }}" as="t" hint-placeholder-count="4">
+                  <div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:baseline;">
+                    <span style="{{ t.badgeStyle }}">{{ t.kind }} {{ t.id }}</span>
+                    <div><b>{{ t.name }}.</b> {{ t.node }}</div>
+                    <span></span>
+                    <button onClick="{{ t.go }}" style="justify-self:start;background:none;border:0;padding:0;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Used in {{ t.sectionTitle }} →</button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ appendixEmpty }}" hint-placeholder-val="{{ false }}"><p style="color:var(--muted);">No statements match.</p></sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isGlossary }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:var(--serif-text);font-variant:small-caps;letter-spacing:.1em;color:var(--accent);font-size:15px;font-weight:600;">Reference</div>
+        <h1 style="font-size:clamp(32px,5vw,46px);line-height:1.08;margin:6px 0 18px;letter-spacing:-.01em;font-weight:500;font-family:var(--serif-display);">Glossary / Index</h1>
+        <input type="search" value="{{ glossaryQuery }}" onChange="{{ setGlossaryQuery }}" placeholder="Search terms" aria-label="Search glossary" style="width:100%;box-sizing:border-box;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:15px;margin-bottom:18px;" style-focus="outline:2px solid var(--accent);outline-offset:1px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">
+          <sc-for list="{{ glossaryItems }}" as="g" hint-placeholder-count="8">
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;">
+              <div style="font-weight:800;">{{ g.term }}</div>
+              <div style="color:var(--muted);font-size:15px;margin:2px 0 6px;">{{ g.node }}</div>
+              <button onClick="{{ g.go }}" style="background:none;border:0;padding:0;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">§{{ g.section }} {{ g.sectionTitle }} →</button>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ glossaryEmpty }}" hint-placeholder-val="{{ false }}"><p style="color:var(--muted);">No terms match.</p></sc-if>
+      </sc-if>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startSection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;remember&quot;,&quot;options&quot;:[&quot;remember&quot;,&quot;home&quot;,&quot;8-4&quot;,&quot;9-1&quot;,&quot;10-2&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;showVideos&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+const STORE = 'geo-guide-v1';
+const h = React.createElement;
+const loadStore = () => { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } };
+const norm = d => ((d % 360) + 360) % 360;
+const rad = d => d * Math.PI / 180;
+const fmt = (n, p = 2) => Number.isInteger(n) ? String(n) : String(+n.toFixed(p));
+const simplifyRoot = n => { let k = 1, m = n; for (let i = 2; i * i <= m; i++) while (m % (i * i) === 0) { m /= i * i; k *= i; } return { k, m }; };
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pts = arr => arr.map(p => p.join(',')).join(' ');
+// HTML label overlaid on an SVG (viewBox W×H); x,y in viewBox units. anchor: 'middle'|'start'|'end'
+const lbl = (x, y, W, H, text, color, anchor = 'middle', size = 15) => ({ text, style: { position: 'absolute', left: (x / W * 100) + '%', top: (y / H * 100) + '%', transform: `translate(${anchor === 'start' ? '0' : anchor === 'end' ? '-100%' : '-50%'}, -50%)`, color, fontSize: size + 2, fontFamily: 'var(--serif-display)', fontStyle: 'italic', fontWeight: 500, whiteSpace: 'nowrap', pointerEvents: 'none', lineHeight: 1 } });
+
+function tex(s, display) {
+  if (window.katex) return h('span', { dangerouslySetInnerHTML: { __html: window.katex.renderToString(s, { throwOnError: false, displayMode: !!display }) } });
+  return h('span', { style: { fontStyle: 'italic' } }, s);
+}
+function rich(text) {
+  const parts = String(text == null ? '' : text).split(/\$([^$]+)\$/);
+  return h(React.Fragment, null, ...parts.map((p, i) => i % 2 ? h(React.Fragment, { key: i }, tex(p)) : p));
+}
+const circlePt = (deg, r = 140, cx = 180, cy = 180) => [cx + r * Math.cos(rad(deg)), cy - r * Math.sin(rad(deg))];
+
+// Small static figures for questions (data-driven).
+function figure(f) {
+  const svgBase = { width: 200, height: 200, style: { color: 'var(--ink)', fontFamily: 'var(--serif-display)', fontStyle: 'italic', maxWidth: '100%' } };
+  if (f.kind === 'inscribed') {
+    const cx = 100, cy = 100, r = 70;
+    const A = circlePt(270 - f.arc / 2, r, cx, cy), C = circlePt(270 + f.arc / 2, r, cx, cy), B = circlePt(105, r, cx, cy);
+    const la = circlePt(270 - f.arc / 2, r + 14, cx, cy), lc = circlePt(270 + f.arc / 2, r + 14, cx, cy), lb = circlePt(105, r + 14, cx, cy);
+    return h('svg', { ...svgBase, viewBox: '0 0 200 200' },
+      h('circle', { cx, cy, r, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8 }),
+      h('path', { d: `M ${A[0]} ${A[1]} A ${r} ${r} 0 ${f.arc > 180 ? 1 : 0} 0 ${C[0]} ${C[1]}`, fill: 'none', stroke: 'var(--accent)', strokeWidth: 5, strokeLinecap: 'round' }),
+      h('line', { x1: B[0], y1: B[1], x2: A[0], y2: A[1], stroke: 'var(--violet)', strokeWidth: 2 }),
+      h('line', { x1: B[0], y1: B[1], x2: C[0], y2: C[1], stroke: 'var(--violet)', strokeWidth: 2 }),
+      h('text', { x: cx, y: cy + r - 8, fontSize: 13, fill: 'var(--accent)', textAnchor: 'middle' }, `${f.arc}°`),
+      h('text', { x: la[0], y: la[1] + 4, fontSize: 13, fill: 'currentColor', textAnchor: 'middle' }, 'A'),
+      h('text', { x: lb[0], y: lb[1] + 4, fontSize: 13, fill: 'currentColor', textAnchor: 'middle' }, 'B'),
+      h('text', { x: lc[0], y: lc[1] + 4, fontSize: 13, fill: 'currentColor', textAnchor: 'middle' }, 'C'));
+  }
+  if (f.kind === 'prism') {
+    const u = 14, ox = 40, oy = 160, P = (x, y, z) => [ox + (x + 0.5 * z) * u, oy - (y + 0.3 * z) * u];
+    const { w, d, h: hh } = f;
+    return h('svg', { ...svgBase, viewBox: '0 0 200 200' },
+      h('polygon', { points: pts([P(0, hh, 0), P(w, hh, 0), P(w, hh, d), P(0, hh, d)]), fill: 'var(--face1)', stroke: 'currentColor', strokeWidth: 1.5 }),
+      h('polygon', { points: pts([P(w, 0, 0), P(w, 0, d), P(w, hh, d), P(w, hh, 0)]), fill: 'var(--face3)', stroke: 'currentColor', strokeWidth: 1.5 }),
+      h('polygon', { points: pts([P(0, 0, 0), P(w, 0, 0), P(w, hh, 0), P(0, hh, 0)]), fill: 'var(--face2)', stroke: 'currentColor', strokeWidth: 1.5 }),
+      h('text', { x: P(w / 2, 0, 0)[0], y: oy + 16, fontSize: 13, fill: 'currentColor', textAnchor: 'middle' }, w),
+      h('text', { x: P(w, 0, d / 2)[0] + 6, y: P(w, 0, d / 2)[1] + 4, fontSize: 13, fill: 'currentColor' }, d),
+      h('text', { x: ox - 8, y: P(0, hh / 2, 0)[1] + 4, fontSize: 13, fill: 'var(--violet)', textAnchor: 'end' }, hh));
+  }
+  if (f.kind === 'points') {
+    const [ax, ay] = f.a, [bx, by] = f.b;
+    const minX = Math.min(ax, bx, 0) - 1, maxX = Math.max(ax, bx, 0) + 1, minY = Math.min(ay, by, 0) - 1, maxY = Math.max(ay, by, 0) + 1;
+    const span = Math.max(maxX - minX, maxY - minY), u = 170 / span;
+    const X = x => 15 + (x - minX) * u, Y = y => 185 - (y - minY) * u;
+    const lines = [];
+    for (let x = minX; x <= maxX; x++) lines.push(h('line', { key: 'x' + x, x1: X(x), y1: Y(minY), x2: X(x), y2: Y(maxY), stroke: 'var(--line)' }));
+    for (let y = minY; y <= maxY; y++) lines.push(h('line', { key: 'y' + y, x1: X(minX), y1: Y(y), x2: X(maxX), y2: Y(y), stroke: 'var(--line)' }));
+    return h('svg', { ...svgBase, viewBox: '0 0 200 200' }, ...lines,
+      h('line', { x1: X(minX), y1: Y(0), x2: X(maxX), y2: Y(0), stroke: 'currentColor', strokeWidth: 1.2 }),
+      h('line', { x1: X(0), y1: Y(minY), x2: X(0), y2: Y(maxY), stroke: 'currentColor', strokeWidth: 1.2 }),
+      h('line', { x1: X(ax), y1: Y(ay), x2: X(bx), y2: Y(ay), stroke: 'var(--orange)', strokeWidth: 1.5, strokeDasharray: '4 3' }),
+      h('line', { x1: X(bx), y1: Y(ay), x2: X(bx), y2: Y(by), stroke: 'var(--violet)', strokeWidth: 1.5, strokeDasharray: '4 3' }),
+      h('line', { x1: X(ax), y1: Y(ay), x2: X(bx), y2: Y(by), stroke: 'var(--accent)', strokeWidth: 2.5 }),
+      h('circle', { cx: X(ax), cy: Y(ay), r: 5, fill: 'var(--accent)' }), h('circle', { cx: X(bx), cy: Y(by), r: 5, fill: 'var(--accent)' }),
+      h('text', { x: X(ax) - 8, y: Y(ay) + 16, fontSize: 12, fill: 'currentColor' }, `A(${ax}, ${ay})`),
+      h('text', { x: X(bx) + 8, y: Y(by) - 6, fontSize: 12, fill: 'currentColor', textAnchor: 'end' }, `B(${bx}, ${by})`));
+  }
+  if (f.kind === 'sector') {
+    const cx = 100, cy = 100, r = 70, A = circlePt(0, r, cx, cy), C = circlePt(f.angle, r, cx, cy);
+    return h('svg', { ...svgBase, viewBox: '0 0 200 200' },
+      h('circle', { cx, cy, r, fill: 'none', stroke: 'currentColor', strokeWidth: 1.8 }),
+      h('path', { d: `M ${cx} ${cy} L ${A[0]} ${A[1]} A ${r} ${r} 0 ${f.angle > 180 ? 1 : 0} 0 ${C[0]} ${C[1]} Z`, fill: 'var(--accent)', fillOpacity: 0.3, stroke: 'var(--accent)', strokeWidth: 2 }),
+      h('text', { x: cx + 22, y: cy - 8, fontSize: 13, fill: 'var(--accent)' }, `${f.angle}°`),
+      h('text', { x: cx + r / 2, y: cy + 16, fontSize: 13, fill: 'currentColor' }, `r = ${f.r}`));
+  }
+  return null;
+}
+
+class Component extends DCLogic {
+  state = this.initState();
+  initState() {
+    const s = loadStore();
+    return {
+      data: null,
+      theme: s.theme || 'light',
+      route: s.route || { view: 'home' },
+      completed: s.completed || [], bookmarks: s.bookmarks || [], scores: s.scores || [],
+      sidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 900 : true,
+      isMobile: typeof window !== 'undefined' ? window.innerWidth < 900 : false,
+      openChapters: { ch8: true, ch9: true, ch10: true },
+      answers: {}, openExamples: {},
+      insc: { a: 205, b: 80, c: 335 }, showCentral: false,
+      prism: { w: 5, d: 3, h: 4, lean: 1.5, oblique: false, slices: false },
+      dist: { a: [-4, -2], b: [3, 4], showLegs: true },
+      exam: { stage: 'setup', chapters: { ch8: true, ch9: true, ch10: true }, count: 10, timer: false, minutes: 15, items: [], answers: {}, remaining: 0, result: null },
+      appendixQuery: '', appendixChapter: 'all', glossaryQuery: '',
+    };
+  }
+  inscRef = React.createRef(); distRef = React.createRef();
+
+  persist() {
+    const { theme, route, completed, bookmarks, scores } = this.state;
+    try { localStorage.setItem(STORE, JSON.stringify({ theme, route, completed, bookmarks, scores })); } catch (e) {}
+  }
+  set(patch, cb) { this.setState(patch, () => { this.persist(); cb && cb(); }); }
+
+  componentDidMount() {
+    const base = document.baseURI;
+    const start = this.props.startSection;
+    if (start && start !== 'remember') this.setState({ route: start === 'home' ? { view: 'home' } : { view: 'section', id: start } });
+    Promise.all([import(new URL('./data/chapters.js', base).href), import(new URL('./data/questions.js', base).href), import(new URL('./data/theorems.js', base).href)])
+      .then(([c, q, t]) => this.setState({ data: { chapters: c.chapters, lessons: c.lessons, questions: q.questions, theorems: t.theorems, glossary: t.glossary } }))
+      .catch(e => console.error('data load failed', e));
+    if (!window.katex) { this.katexPoll = setInterval(() => { if (window.katex) { clearInterval(this.katexPoll); this.forceUpdate(); } }, 150); }
+    this.onResize = () => { const m = window.innerWidth < 900; if (m !== this.state.isMobile) this.setState({ isMobile: m, sidebarOpen: !m }); };
+    window.addEventListener('resize', this.onResize);
+    this.onKey = e => {
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      if (e.key === ']') this.step(1); else if (e.key === '[') this.step(-1);
+      else if (e.key === 'Escape' && this.state.isMobile) this.setState({ sidebarOpen: false });
+    };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize); window.removeEventListener('keydown', this.onKey);
+    clearInterval(this.katexPoll); clearInterval(this.timerId);
+  }
+
+  // ---- navigation
+  allSections() { const d = this.state.data; return d ? d.chapters.flatMap(ch => ch.sections.map(s => ({ ...s, chapter: ch }))) : []; }
+  go(route) { this.set({ route, sidebarOpen: this.state.isMobile ? false : this.state.sidebarOpen }); window.scrollTo({ top: 0 }); }
+  step(dir) {
+    const r = this.state.route; if (r.view !== 'section') return;
+    const all = this.allSections(), i = all.findIndex(s => s.id === r.id), n = all[i + dir];
+    if (n) this.go({ view: 'section', id: n.id });
+  }
+
+  // ---- drag helpers
+  svgPoint(ref, e) {
+    const svg = ref.current; if (!svg) return null;
+    const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+    return [(e.clientX - r.left) / r.width * vb.width, (e.clientY - r.top) / r.height * vb.height];
+  }
+  startDrag(onMove) {
+    return e => {
+      e.preventDefault();
+      const move = ev => onMove(ev), up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+      window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+    };
+  }
+  setInsc(key, deg) { this.setState(s => ({ insc: { ...s.insc, [key]: norm(deg) } })); }
+  inscDrag(key) { return this.startDrag(ev => { const p = this.svgPoint(this.inscRef, ev); if (p) this.setInsc(key, Math.atan2(180 - p[1], p[0] - 180) * 180 / Math.PI); }); }
+  inscKey(key) { return e => { const d = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -3 : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 3 : 0; if (d) { e.preventDefault(); this.setInsc(key, this.state.insc[key] + d); } }; }
+  distDrag(key) { return this.startDrag(ev => { const p = this.svgPoint(this.distRef, ev); if (!p) return; const x = Math.max(-8, Math.min(8, Math.round((p[0] - 200) / 22))), y = Math.max(-8, Math.min(8, Math.round((200 - p[1]) / 22))); this.setState(s => ({ dist: { ...s.dist, [key]: [x, y] } })); }); }
+  distKey(key) { return e => { const dx = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0, dy = e.key === 'ArrowUp' ? 1 : e.key === 'ArrowDown' ? -1 : 0; if (dx || dy) { e.preventDefault(); this.setState(s => { const [x, y] = s.dist[key]; return { dist: { ...s.dist, [key]: [Math.max(-8, Math.min(8, x + dx)), Math.max(-8, Math.min(8, y + dy))] } }; }); } }; }
+
+  // ---- questions
+  grade(q, val) {
+    if (val == null || val === '') return false;
+    if (q.type === 'mc' || (q.type === 'diagram' && q.choices)) return val === q.answer;
+    const n = parseFloat(String(val).replace(/[^0-9.\-]/g, '')); return !isNaN(n) && Math.abs(n - q.answer) <= (q.tolerance || 0.01);
+  }
+  answerText(q) { return q.choices ? rich(q.choices[q.answer]) : h('span', null, fmt(q.answer), q.unit ? ' ' + q.unit : ''); }
+  setAns(q, patch, examMode) {
+    if (examMode) this.setState(s => ({ exam: { ...s.exam, answers: { ...s.exam.answers, [q.id]: { ...(s.exam.answers[q.id] || {}), ...patch } } } }));
+    else this.setState(s => ({ answers: { ...s.answers, [q.id]: { ...(s.answers[q.id] || {}), ...patch } } }));
+  }
+  qvm(q, mode, idx) {
+    const examMode = mode === 'exam' || mode === 'review';
+    const a = (examMode ? this.state.exam.answers[q.id] : this.state.answers[q.id]) || {};
+    const isMC = !!q.choices, checked = !!a.checked, locked = mode === 'review' || (checked && !!a.correct) || (checked && mode !== 'supplemental' && mode !== 'check' && mode !== 'chapter');
+    const fin = mode === 'review' || checked;
+    const chapter = this.state.data.chapters.find(c => c.id === q.chapter);
+    const choices = (q.choices || []).map((c, i) => {
+      const selected = a.value === i, right = fin && i === q.answer, wrong = fin && selected && i !== q.answer;
+      return { letter: 'ABCD'[i], node: rich(c), selected, select: () => !locked && this.setAns(q, { value: i, checked: false }, examMode),
+        style: { textAlign: 'left', padding: '10px 12px', borderRadius: 10, cursor: locked ? 'default' : 'pointer', fontSize: 15, color: 'var(--ink)',
+          border: `2px solid ${right ? 'var(--accent)' : wrong ? 'var(--red)' : selected ? 'var(--violet)' : 'var(--line)'}`,
+          background: right ? 'var(--accent-soft)' : wrong ? 'var(--red-soft)' : selected ? 'var(--violet-soft)' : 'var(--panel)' } };
+    });
+    const hasVal = a.value != null && a.value !== '';
+    const correct = mode === 'review' ? this.grade(q, a.value) : !!a.correct;
+    let feedbackNode = null, feedbackStyle = null;
+    const box = (bg, color) => ({ padding: '10px 14px', borderRadius: 10, background: bg, color, fontWeight: 600, fontSize: 15, animation: 'fadeUp .25s ease' });
+    if (mode === 'review') {
+      feedbackNode = h('span', null, correct ? 'Correct. ' : 'Missed. ', 'Your answer: ', hasVal ? (isMC ? 'ABCD'[a.value] : String(a.value)) : '—', ' · Correct answer: ', this.answerText(q));
+      feedbackStyle = correct ? box('var(--accent-soft)', 'var(--accent)') : box('var(--red-soft)', 'var(--red)');
+    } else if (a.revealed) {
+      feedbackNode = h('span', null, 'Answer: ', this.answerText(q)); feedbackStyle = box('var(--soft)', 'var(--ink)');
+    } else if (checked) {
+      feedbackNode = correct ? 'Correct.' : 'Not yet. Check your work and try again.'; feedbackStyle = correct ? box('var(--accent-soft)', 'var(--accent)') : box('var(--red-soft)', 'var(--red)');
+    }
+    const solution = (q.solution || []).map((s, i) => ({ node: rich(s), key: i }));
+    return {
+      id: q.id, num: idx + 1, typeLabel: q.type === 'diagram' ? 'Diagram' : isMC ? 'Multiple choice' : 'Numeric', showChapter: examMode, chapterLabel: chapter ? `Chapter ${chapter.number}` : '',
+      promptNode: rich(q.prompt), hasFigure: !!q.figure, figure: q.figure ? figure(q.figure) : null,
+      isMC, isNumeric: !isMC, choices, locked, inputValue: isMC ? '' : (a.value == null ? '' : a.value), unit: q.unit || '',
+      onInput: e => this.setAns(q, { value: e.target.value, checked: false }, examMode),
+      onKey: e => { if (e.key === 'Enter' && mode !== 'exam' && mode !== 'review') this.setAns(q, { checked: true, correct: this.grade(q, a.value) }, examMode); },
+      showCheck: mode !== 'exam' && mode !== 'review' && hasVal && !checked && !a.revealed,
+      check: () => this.setAns(q, { checked: true, correct: this.grade(q, a.value) }, examMode),
+      showRetry: mode !== 'exam' && mode !== 'review' && checked && !correct,
+      retry: () => this.setAns(q, { value: null, checked: false, correct: false }, examMode),
+      showReveal: mode === 'supplemental' && !a.revealed && !(checked && correct), revealLabel: 'Reveal answer', reveal: () => this.setAns(q, { revealed: true }, examMode),
+      hasFeedback: !!feedbackNode, feedbackNode, feedbackStyle,
+      showSolution: mode !== 'exam' && mode !== 'supplemental' && fin && solution.length > 0, solution,
+    };
+  }
+
+  // ---- exam
+  examPool() { const { data, exam } = this.state; return data ? data.questions.filter(q => exam.chapters[q.chapter]) : []; }
+  startExam() {
+    const items = shuffle(this.examPool()).slice(0, this.state.exam.count).map(q => q.id);
+    const remaining = this.state.exam.timer ? this.state.exam.minutes * 60 : 0;
+    this.setState(s => ({ exam: { ...s.exam, stage: 'running', items, answers: {}, remaining, result: null } }));
+    clearInterval(this.timerId);
+    if (remaining) this.timerId = setInterval(() => this.setState(s => { if (s.exam.stage !== 'running') return null; if (s.exam.remaining <= 1) { setTimeout(() => this.submitExam(), 0); return { exam: { ...s.exam, remaining: 0 } }; } return { exam: { ...s.exam, remaining: s.exam.remaining - 1 } }; }), 1000);
+    window.scrollTo({ top: 0 });
+  }
+  submitExam() {
+    clearInterval(this.timerId);
+    const { data, exam } = this.state; if (exam.stage !== 'running') return;
+    const byId = Object.fromEntries(data.questions.map(q => [q.id, q]));
+    const per = {}; let correct = 0;
+    exam.items.forEach(id => { const q = byId[id]; const ok = this.grade(q, (exam.answers[id] || {}).value); per[q.chapter] = per[q.chapter] || { total: 0, correct: 0 }; per[q.chapter].total++; if (ok) { per[q.chapter].correct++; correct++; } });
+    const result = { correct, total: exam.items.length, per, date: new Date().toISOString(), chapters: Object.keys(exam.chapters).filter(k => exam.chapters[k]) };
+    this.set({ exam: { ...exam, stage: 'done', result }, scores: [result, ...this.state.scores].slice(0, 10) });
+    window.scrollTo({ top: 0 });
+  }
+
+  renderVals() {
+    const S = this.state, D = S.data, route = S.route;
+    const seg = (active) => ({ flex: 1, padding: '8px 12px', borderRadius: 8, border: 0, cursor: 'pointer', fontWeight: 700, fontSize: 13, whiteSpace: 'nowrap', background: active ? 'var(--panel)' : 'transparent', color: active ? 'var(--ink)' : 'var(--muted)', boxShadow: active ? '0 1px 3px rgba(0,0,0,.12)' : 'none' });
+    const navBtn = (active) => ({ display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: 'left', border: 0, padding: '7px 8px 7px 10px', borderRadius: 8, cursor: 'pointer', fontSize: 14.5, lineHeight: 1.3, background: active ? 'var(--accent-soft)' : 'transparent', color: active ? 'var(--accent)' : 'var(--ink)', fontWeight: active ? 700 : 500 });
+    const all = this.allSections();
+    const lessonSecs = all.filter(s => s.kind === 'lesson');
+    const progressPct = lessonSecs.length ? Math.round(100 * lessonSecs.filter(s => S.completed.includes(s.id)).length / lessonSecs.length) : 0;
+    const sec = route.view === 'section' ? all.find(s => s.id === route.id) : null;
+    const chapterOf = sec && sec.chapter;
+    const lesson = sec && D && D.lessons[sec.id];
+    const isLesson = !!sec && sec.kind === 'lesson', isBuilt = !!lesson, isProblems = !!sec && (sec.kind === 'problems' || sec.kind === 'supplemental');
+    const secIndex = sec ? chapterOf.sections.filter(s => s.kind === 'lesson').findIndex(s => s.id === sec.id) + 1 : 0;
+
+    const vals = {
+      theme: S.theme, screenLabel: sec ? `${sec.chapter.number}-${sec.title}` : route.view,
+      sidebarStyle: S.isMobile
+        ? { position: 'fixed', top: 0, bottom: 0, left: 0, width: 300, zIndex: 40, transform: `translateX(${S.sidebarOpen ? 0 : -100}%)`, transition: 'transform .25s ease', background: 'var(--panel)', borderRight: '1px solid var(--line)' }
+        : { width: S.sidebarOpen ? 300 : 0, overflow: 'hidden', transition: 'width .25s ease', flexShrink: 0, position: 'sticky', top: 0, height: '100vh', background: 'var(--panel)', borderRight: S.sidebarOpen ? '1px solid var(--line)' : 0 },
+      showBackdrop: S.isMobile && S.sidebarOpen,
+      toggleSidebar: () => this.setState({ sidebarOpen: !S.sidebarOpen }), closeSidebar: () => this.setState({ sidebarOpen: false }),
+      toggleTheme: () => this.set({ theme: S.theme === 'dark' ? 'light' : 'dark' }), themeLabel: S.theme === 'dark' ? 'Light' : 'Dark',
+      goHome: () => this.go({ view: 'home' }), goExam: () => this.go({ view: 'exam' }), goAppendix: () => this.go({ view: 'appendix' }), goGlossary: () => this.go({ view: 'glossary' }),
+      homeNavStyle: navBtn(route.view === 'home'), examNavStyle: navBtn(route.view === 'exam'), appendixNavStyle: navBtn(route.view === 'appendix'), glossaryNavStyle: navBtn(route.view === 'glossary'),
+      progressPct, progressBarStyle: { width: progressPct + '%', height: '100%', background: 'var(--accent)', transition: 'width .3s' },
+      isHome: route.view === 'home', isExam: route.view === 'exam', isAppendix: route.view === 'appendix', isGlossary: route.view === 'glossary',
+      isSection: !!sec, isLesson, isBuilt, isStub: isLesson && !isBuilt, isProblems,
+      theoremCount: D ? D.theorems.length : 0, glossaryCount: D ? D.glossary.length : 0,
+      crumb: sec ? `Chapter ${chapterOf.number}: ${chapterOf.title} / ${sec.title}` : ({ home: 'Overview', exam: 'Customized Full-Length Exam', appendix: 'Appendix', glossary: 'Glossary / Index' })[route.view] || '',
+      navChapters: D ? D.chapters.map(ch => {
+        const lessons = ch.sections.filter(s => s.kind === 'lesson');
+        return { number: ch.number, title: ch.title, open: !!S.openChapters[ch.id], chevron: S.openChapters[ch.id] ? '▾' : '▸',
+          toggle: () => this.setState(s => ({ openChapters: { ...s.openChapters, [ch.id]: !s.openChapters[ch.id] } })),
+          doneCount: lessons.filter(s => S.completed.includes(s.id)).length, total: lessons.length,
+          sections: ch.sections.map(s => { const active = sec && sec.id === s.id, done = S.completed.includes(s.id);
+            return { title: s.title, current: active ? 'page' : undefined, go: () => this.go({ view: 'section', id: s.id }), style: navBtn(active), bookmarked: S.bookmarks.includes(s.id),
+              mark: done ? '✓' : s.kind === 'lesson' ? '' : '≡', markStyle: { width: 16, textAlign: 'center', fontSize: 12, color: done ? 'var(--accent)' : 'var(--muted)', fontWeight: 800, flexShrink: 0 } }; }) };
+      }) : [],
+      homeChapters: D ? D.chapters.map(ch => { const lessons = ch.sections.filter(s => s.kind === 'lesson'); const done = lessons.filter(s => S.completed.includes(s.id)).length; const next = lessons.find(s => !S.completed.includes(s.id)) || lessons[0];
+        const written = lessons.some(s => s.summary || D.lessons[s.id]);
+        return { number: ch.number, title: ch.title, lessonCount: lessons.length, doneCount: done, barStyle: { width: Math.round(100 * done / lessons.length) + '%', height: '100%', background: 'var(--accent)' }, cta: done ? 'Continue' : written ? 'Start' : 'Browse outline', go: () => this.go({ view: 'section', id: next.id }) }; }) : [],
+    };
+
+    if (sec) {
+      const i = all.indexOf(sec), prev = all[i - 1], next = all[i + 1];
+      const completed = S.completed.includes(sec.id), bookmarked = S.bookmarks.includes(sec.id);
+      Object.assign(vals, {
+        secChapterNum: chapterOf.number, secIndex, secTitle: sec.title, hasParts: !!sec.parts, secParts: (sec.parts || []).map(p => ({ label: p })),
+        hasSummary: !!sec.summary, secSummaryNode: rich(sec.summary), secFormulaNode: sec.formula ? tex(sec.formula, true) : null,
+        completed, completeLabel: completed ? '✓ Completed' : 'Mark section complete',
+        completeBtnStyle: { padding: '10px 16px', borderRadius: 10, border: completed ? '1px solid var(--accent)' : 0, background: completed ? 'var(--accent-soft)' : 'var(--accent)', color: completed ? 'var(--accent)' : '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer' },
+        toggleComplete: () => this.set({ completed: completed ? S.completed.filter(x => x !== sec.id) : [...S.completed, sec.id] }),
+        bookmarked, bookmarkLabel: bookmarked ? '★ Bookmarked' : '☆ Bookmark',
+        bookmarkBtnStyle: { height: 40, padding: '0 12px', borderRadius: 10, border: '1px solid var(--line)', background: bookmarked ? 'var(--orange-soft)' : 'var(--panel)', color: bookmarked ? 'var(--orange)' : 'var(--ink)', cursor: 'pointer', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' },
+        toggleBookmark: () => this.set({ bookmarks: bookmarked ? S.bookmarks.filter(x => x !== sec.id) : [...S.bookmarks, sec.id] }),
+        hasPrev: !!prev, hasNext: !!next, prevTitle: prev ? prev.title : '', nextTitle: next ? next.title : '', goPrev: () => this.step(-1), goNext: () => this.step(1),
+      });
+    }
+
+    if (lesson) {
+      Object.assign(vals, {
+        intro: lesson.intro.map(p => ({ node: rich(p) })),
+        definitions: lesson.definitions.map(d => ({ term: d.term, node: rich(d.text) })),
+        formulas: lesson.formulas.map(f => ({ label: f.label, node: tex(f.tex, true) })),
+        videoSrc: lesson.video, videoTitle: lesson.videoTitle, showVideo: this.props.showVideos !== false,
+        examples: lesson.examples.map((ex, i) => { const open = !!S.openExamples[sec.id + i]; return { title: ex.title, givenNode: rich(ex.given), open, btn: open ? 'Hide steps' : 'Show steps', steps: ex.steps.map(s => ({ node: rich(s) })), toggle: () => this.setState(s => ({ openExamples: { ...s.openExamples, [sec.id + i]: !open } })) }; }),
+        lessonTheorems: (lesson.theorems || []).map(id => D.theorems.find(t => t.id === id)).filter(Boolean).map(t => ({ id: t.id, kind: t.kind, name: t.name, node: rich(t.statement), go: () => { this.setState({ appendixQuery: t.name, appendixChapter: 'all' }); this.go({ view: 'appendix' }); } })),
+        isInscribed: lesson.diagram === 'inscribed', isPrism: lesson.diagram === 'prism', isDistance: lesson.diagram === 'distance',
+        diagramHint: ({ inscribed: 'Drag the points on the circle.', prism: 'Use the sliders. Switch between right and oblique.', distance: 'Drag the points on the grid.' })[lesson.diagram],
+        inscRef: this.inscRef, distRef: this.distRef,
+      });
+      const qs = lesson.checks.map(id => D.questions.find(q => q.id === id)).filter(Boolean);
+      Object.assign(vals, { hasQList: true, qlistTitle: 'Check your understanding', qlistNote: 'Answer each question. You get instant feedback and a step-by-step solution.', qlist: qs.map((q, i) => this.qvm(q, 'check', i)) });
+
+      if (lesson.diagram === 'inscribed') {
+        const { a, b, c } = S.insc;
+        const A = circlePt(a), B = circlePt(b), C = circlePt(c);
+        const dAC = norm(c - a), dAB = norm(b - a);
+        const bOnCCW = dAB < dAC; // B lies on the ccw arc from A to C → intercepted arc is the other one
+        const arc = bOnCCW ? 360 - dAC : dAC;
+        const [P, Q] = bOnCCW ? [C, A] : [A, C];
+        const arcPath = `M ${P[0]} ${P[1]} A 140 140 0 ${arc > 180 ? 1 : 0} 0 ${Q[0]} ${Q[1]}`;
+        const ang = arc / 2;
+        const phi1 = Math.atan2(A[1] - B[1], A[0] - B[0]), phi2 = Math.atan2(C[1] - B[1], C[0] - B[0]);
+        let diff = phi2 - phi1; while (diff > Math.PI) diff -= 2 * Math.PI; while (diff < -Math.PI) diff += 2 * Math.PI;
+        const m1 = [B[0] + 24 * Math.cos(phi1), B[1] + 24 * Math.sin(phi1)], m2 = [B[0] + 24 * Math.cos(phi2), B[1] + 24 * Math.sin(phi2)];
+        const angleMarker = `M ${m1[0]} ${m1[1]} A 24 24 0 0 ${diff > 0 ? 1 : 0} ${m2[0]} ${m2[1]}`;
+        const mid = phi1 + diff / 2, angleLabel = [B[0] + 44 * Math.cos(mid), B[1] + 44 * Math.sin(mid) + 5];
+        const arcMidDeg = bOnCCW ? c + arc / 2 : a + arc / 2, arcText = circlePt(arcMidDeg, 112);
+        const oa = Math.atan2(A[1] - 180, A[0] - 180), oc = Math.atan2(C[1] - 180, C[0] - 180);
+        let od = oc - oa; while (od > Math.PI) od -= 2 * Math.PI; while (od < -Math.PI) od += 2 * Math.PI;
+        if (arc > 180) od = od > 0 ? od - 2 * Math.PI : od + 2 * Math.PI;
+        const c1 = [180 + 28 * Math.cos(oa), 180 + 28 * Math.sin(oa)], c2 = [180 + 28 * Math.cos(oc), 180 + 28 * Math.sin(oc)];
+        const centralMarker = `M ${c1[0]} ${c1[1]} A 28 28 0 ${arc > 180 ? 1 : 0} ${od > 0 ? 1 : 0} ${c2[0]} ${c2[1]}`;
+        const cm = oa + od / 2, centralLabel = [180 + 46 * Math.cos(cm), 180 + 46 * Math.sin(cm) + 5];
+        const la = circlePt(a, 162), lb = circlePt(b, 162), lc = circlePt(c, 162);
+        vals.insc = { ax: A[0], ay: A[1], bx: B[0], by: B[1], cx: C[0], cy: C[1], arcPath, angleMarker, centralMarker,
+          angleLabelX: angleLabel[0], angleLabelY: angleLabel[1], centralLabelX: centralLabel[0], centralLabelY: centralLabel[1], arcTextX: arcText[0], arcTextY: arcText[1] + 5,
+          alx: la[0], aly: la[1], blx: lb[0], bly: lb[1], clx: lc[0], cly: lc[1],
+          arcLabel: `${Math.round(arc)}°`, angleLabel: `${fmt(Math.round(arc * 2) / 4, 1)}°`,
+          labels: [lbl(angleLabel[0], angleLabel[1] - 5, 360, 360, `${fmt(Math.round(arc * 2) / 4, 1)}°`, 'var(--violet)'), lbl(arcText[0], arcText[1], 360, 360, `${Math.round(arc)}°`, 'var(--accent)'),
+            ...(S.showCentral ? [lbl(centralLabel[0], centralLabel[1] - 5, 360, 360, `${Math.round(arc)}°`, 'var(--accent)')] : [])],
+          equation: tex(`m\\angle ABC = \\tfrac{1}{2}(${Math.round(arc)}^\\circ) = ${fmt(Math.round(arc * 2) / 4, 1)}^\\circ`) };
+        Object.assign(vals, { showCentral: S.showCentral, toggleCentral: () => this.setState({ showCentral: !S.showCentral }), dragA: this.inscDrag('a'), dragB: this.inscDrag('b'), dragC: this.inscDrag('c'), keyA: this.inscKey('a'), keyB: this.inscKey('b'), keyC: this.inscKey('c') });
+      }
+
+      if (lesson.diagram === 'prism') {
+        const p = S.prism, k = p.oblique ? p.lean : 0, u = 24, ox = 60, oy = 300;
+        const P = (x, y, z) => [ox + (x + 0.5 * z) * u, oy - (y + 0.3 * z) * u];
+        const { w, d, h: hh } = p, B = w * d, V = B * hh, per = 2 * w + 2 * d, LA = per * hh, TA = LA + 2 * B;
+        const edge = Math.sqrt(hh * hh + k * k);
+        const face = (y0, y1) => { const k0 = k * y0 / hh, k1 = k * y1 / hh; return {
+          front: pts([P(k0, y0, 0), P(w + k0, y0, 0), P(w + k1, y1, 0), P(k1, y1, 0)]),
+          right: pts([P(w + k0, y0, 0), P(w + k0, y0, d), P(w + k1, y1, d), P(w + k1, y1, 0)]),
+          top: pts([P(k1, y1, 0), P(w + k1, y1, 0), P(w + k1, y1, d), P(k1, y1, d)]) }; };
+        const whole = face(0, hh);
+        const n = 8, slices = p.oblique && p.slices ? Array.from({ length: n }, (_, i) => face(i * hh / n, (i + 1) * hh / n)) : [];
+        const hb = P(k, hh, 0), e0 = P(0, 0, 0), e1 = P(k, hh, 0), wl = P(w / 2, 0, 0), dl = P(w, 0, d / 2), bl = P(w / 2, 0, d / 2);
+        vals.pr = { ...whole, base: pts([P(0, 0, 0), P(w, 0, 0), P(w, 0, d), P(0, 0, d)]),
+          hx1: hb[0], hy1: hb[1], hx2: hb[0], hy2: oy, hlx: hb[0] + (k ? -70 : 8), hly: (hb[1] + oy) / 2 + 5,
+          ex1: e0[0], ey1: e0[1], ex2: e1[0], ey2: e1[1], elx: e0[0] - 6, ely: (e0[1] + e1[1]) / 2 - 10, edgeLen: fmt(edge, 2),
+          B, V, leanLabel: fmt(k, 1),
+          labels: [lbl(hb[0] + (k ? -8 : 8), (hb[1] + oy) / 2, 420, 340, `h = ${hh}`, 'var(--violet)', k ? 'end' : 'start', 16),
+            ...(k ? [lbl(e0[0] - 6, (e0[1] + e1[1]) / 2 - 14, 420, 340, `edge = ${fmt(edge, 2)}`, 'var(--orange)', 'end', 16)] : []),
+            lbl(wl[0], wl[1] + 14, 420, 340, String(w), 'var(--ink)'), lbl(dl[0] + 10, dl[1], 420, 340, String(d), 'var(--ink)', 'start'),
+            lbl(bl[0], bl[1], 420, 340, `B = ${B}`, 'var(--accent)')],
+          areaLabel: p.oblique ? 'Lateral edge length' : 'Total area = ph + 2B', areaValue: p.oblique ? fmt(edge, 2) : TA,
+          equation: p.oblique ? tex(`V = Bh = ${B} \\cdot ${hh} = ${V}\\quad(\\text{not } B \\cdot ${fmt(edge, 2)})`) : tex(`V = Bh = (${w} \\cdot ${d}) \\cdot ${hh} = ${V}`),
+          note: p.oblique ? 'The lean changes the lateral edge. It does not change the height or the volume. Turn on slices to see why: each slice is the same as in the right prism, only shifted.' : 'In a right prism the lateral edge equals the height. The lateral faces are rectangles, so LA = ph.' };
+        Object.assign(vals, { prism: p, prismSlices: slices, prismWhole: slices.length === 0,
+          rightBtnStyle: seg(!p.oblique), obliqueBtnStyle: seg(p.oblique),
+          setRight: () => this.setState(s => ({ prism: { ...s.prism, oblique: false } })), setOblique: () => this.setState(s => ({ prism: { ...s.prism, oblique: true } })),
+          setW: e => this.setState(s => ({ prism: { ...s.prism, w: +e.target.value } })), setD: e => this.setState(s => ({ prism: { ...s.prism, d: +e.target.value } })),
+          setH: e => this.setState(s => ({ prism: { ...s.prism, h: +e.target.value } })), setLean: e => this.setState(s => ({ prism: { ...s.prism, lean: +e.target.value } })),
+          toggleSlices: () => this.setState(s => ({ prism: { ...s.prism, slices: !s.prism.slices } })) });
+      }
+
+      if (lesson.diagram === 'distance') {
+        const { a, b } = S.dist, X = x => 200 + x * 22, Y = y => 200 - y * 22;
+        const dx = b[0] - a[0], dy = b[1] - a[1], d2 = dx * dx + dy * dy, dv = Math.sqrt(d2), { k, m } = simplifyRoot(d2 || 1);
+        const exact = d2 === 0 ? '0' : m === 1 ? String(k) : k === 1 ? `\\sqrt{${m}}` : `${k}\\sqrt{${m}}`;
+        const grid = []; for (let i = -8; i <= 8; i++) { grid.push({ x1: X(i), y1: 0, x2: X(i), y2: 400 }); grid.push({ x1: 0, y1: Y(i), x2: 400, y2: Y(i) }); }
+        const sx = Math.sign(dx) || 1, sy = Math.sign(dy) || 1;
+        const corner = [X(b[0]), Y(a[1])];
+        const rightAngle = dx && dy ? `M ${corner[0] - sx * 10} ${corner[1]} L ${corner[0] - sx * 10} ${corner[1] - sy * 10} L ${corner[0]} ${corner[1] - sy * 10}` : '';
+        const slope = dx === 0 ? 'undefined (vertical)' : dy === 0 ? '0 (horizontal)' : fmt(dy / dx, 2);
+        vals.dd = { ax: X(a[0]), ay: Y(a[1]), bx: X(b[0]), by: Y(b[1]), a0: a[0], a1: a[1], b0: b[0], b1: b[1], dx, dy, dDec: fmt(dv, 2), rightAngle,
+          labels: [
+            ...(S.dist.showLegs && dx ? [lbl(X((a[0] + b[0]) / 2), Y(a[1]) + (sy > 0 ? 16 : -16), 400, 400, `Δx = ${dx}`, 'var(--orange)')] : []),
+            ...(S.dist.showLegs && dy ? [lbl(X(b[0]) + (sx > 0 ? 10 : -10), Y((a[1] + b[1]) / 2), 400, 400, `Δy = ${dy}`, 'var(--violet)', sx > 0 ? 'start' : 'end')] : []),
+            lbl(X((a[0] + b[0]) / 2) + (sx * sy > 0 ? -36 : 36), Y((a[1] + b[1]) / 2) - 10, 400, 400, `d = ${fmt(dv, 2)}`, 'var(--accent)'),
+            lbl(X(a[0]), Y(a[1]) + (sy > 0 ? -20 : 22), 400, 400, `A(${a[0]}, ${a[1]})`, 'var(--ink)'),
+            lbl(X(b[0]), Y(b[1]) + (sy > 0 ? -20 : 22), 400, 400, `B(${b[0]}, ${b[1]})`, 'var(--ink)')],
+          equation: tex(`d = \\sqrt{(${dx})^2 + (${dy})^2} = \\sqrt{${d2}} = ${exact}${m !== 1 && d2 ? ` \\approx ${fmt(dv, 2)}` : ''}`),
+          mid: `(${fmt((a[0] + b[0]) / 2, 1)}, ${fmt((a[1] + b[1]) / 2, 1)})`, slope };
+        Object.assign(vals, { dist: S.dist, gridLines: grid, toggleLegs: () => this.setState(s => ({ dist: { ...s.dist, showLegs: !s.dist.showLegs } })), dragPA: this.distDrag('a'), dragPB: this.distDrag('b'), keyPA: this.distKey('a'), keyPB: this.distKey('b') });
+      }
+    }
+
+    if (isProblems && D) {
+      const set = sec.kind === 'problems' ? 'chapter' : 'supplemental';
+      const qs = D.questions.filter(q => q.chapter === chapterOf.id && q.set === set);
+      Object.assign(vals, { hasQList: true, qlistTitle: set === 'chapter' ? 'Problems with full solutions' : 'Supplemental problems',
+        qlistNote: set === 'chapter' ? 'Each problem shows a step-by-step solution after you check it.' : 'Answers only. Check your answer, or reveal it.', qlist: qs.map((q, i) => this.qvm(q, set, i)) });
+    }
+
+    if (route.view === 'exam' && D) {
+      const ex = S.exam, pool = this.examPool(), byId = Object.fromEntries(D.questions.map(q => [q.id, q]));
+      const mm = Math.floor(ex.remaining / 60), ss = ex.remaining % 60;
+      Object.assign(vals, {
+        exam: ex, examSetup: ex.stage === 'setup', examRunning: ex.stage === 'running', examDone: ex.stage === 'done',
+        examChapterOpts: D.chapters.filter(ch => D.questions.some(q => q.chapter === ch.id)).map(ch => ({ number: ch.number, title: ch.title, on: !!ex.chapters[ch.id], count: D.questions.filter(q => q.chapter === ch.id).length, toggle: () => this.setState(s => ({ exam: { ...s.exam, chapters: { ...s.exam.chapters, [ch.id]: !s.exam.chapters[ch.id] } } })) })),
+        examCountOpts: [5, 10, 15, 20].map(n => ({ n, style: seg(ex.count === n), pick: () => this.setState(s => ({ exam: { ...s.exam, count: n } })) })),
+        examAvailable: pool.length, examStartDisabled: pool.length === 0,
+        toggleTimer: () => this.setState(s => ({ exam: { ...s.exam, timer: !s.exam.timer } })), setMinutes: e => this.setState(s => ({ exam: { ...s.exam, minutes: +e.target.value } })),
+        startExam: () => this.startExam(), submitExam: () => this.submitExam(), resetExam: () => this.setState(s => ({ exam: { ...s.exam, stage: 'setup', items: [], answers: {}, result: null } })),
+        hasScores: S.scores.length > 0, noScores: S.scores.length === 0,
+        scoreRows: S.scores.slice(0, 6).map(r => ({ date: new Date(r.date).toLocaleDateString(), chapters: r.chapters.map(c => c.replace('ch', 'Ch ')).join(', '), score: `${r.correct}/${r.total}` })),
+      });
+      if (ex.stage === 'running') {
+        const items = ex.items.map(id => byId[id]);
+        Object.assign(vals, { examTotal: items.length, examAnswered: items.filter(q => { const a = ex.answers[q.id]; return a && a.value != null && a.value !== ''; }).length,
+          timerLabel: `${mm}:${String(ss).padStart(2, '0')}`, timerStyle: { fontFamily: 'var(--mono)', fontSize: 15, fontVariantNumeric: 'tabular-nums', color: ex.remaining < 60 ? 'var(--red)' : 'var(--ink)' },
+          hasQList: true, qlistTitle: 'Exam', qlistNote: 'Answer every question. Then press Submit.', qlist: items.map((q, i) => this.qvm(q, 'exam', i)) });
+      }
+      if (ex.stage === 'done' && ex.result) {
+        const r = ex.result, missed = ex.items.map(id => byId[id]).filter(q => !this.grade(q, (ex.answers[q.id] || {}).value));
+        Object.assign(vals, { examTotal: r.total, examCorrect: r.correct, examScorePct: r.total ? Math.round(100 * r.correct / r.total) : 0,
+          examBreakdown: D.chapters.filter(ch => r.per[ch.id]).map(ch => ({ number: ch.number, title: ch.title, correct: r.per[ch.id].correct, total: r.per[ch.id].total, barStyle: { width: Math.round(100 * r.per[ch.id].correct / r.per[ch.id].total) + '%', height: '100%', background: 'var(--accent)' } })),
+          hasQList: missed.length > 0, qlistTitle: 'Review missed items', qlistNote: 'Each missed question shows the correct answer and the solution.', qlist: missed.map((q, i) => this.qvm(q, 'review', i)) });
+      }
+    }
+
+    if (route.view === 'appendix' && D) {
+      const q = S.appendixQuery.trim().toLowerCase();
+      const match = t => (S.appendixChapter === 'all' || t.chapter === S.appendixChapter) && (!q || `${t.id} ${t.kind} ${t.name} ${t.statement}`.toLowerCase().includes(q));
+      const groups = D.chapters.map(ch => ({ number: ch.number, title: ch.title, items: D.theorems.filter(t => t.chapter === ch.id && match(t)).map(t => { const s = all.find(x => x.id === t.section); return { id: t.id, kind: t.kind, name: t.name, node: rich(t.statement), sectionTitle: s ? `§${t.section} ${s.title}` : t.section, go: () => this.go({ view: 'section', id: t.section }),
+        badgeStyle: { fontSize: 12, fontWeight: 800, whiteSpace: 'nowrap', padding: '3px 8px', borderRadius: 6, background: t.kind === 'Postulate' ? 'var(--violet-soft)' : 'var(--accent-soft)', color: t.kind === 'Postulate' ? 'var(--violet)' : 'var(--accent)' } }; }) })).filter(g => g.items.length);
+      Object.assign(vals, { appendixQuery: S.appendixQuery, setAppendixQuery: e => this.setState({ appendixQuery: e.target.value }), appendixGroups: groups, appendixEmpty: groups.length === 0,
+        appendixFilters: [{ id: 'all', label: 'All' }, ...D.chapters.filter(ch => D.theorems.some(t => t.chapter === ch.id)).map(ch => ({ id: ch.id, label: `Ch ${ch.number}` }))].map(f => ({ label: f.label, style: seg(S.appendixChapter === f.id), pick: () => this.setState({ appendixChapter: f.id }) })) });
+    }
+
+    if (route.view === 'glossary' && D) {
+      const q = S.glossaryQuery.trim().toLowerCase();
+      const items = D.glossary.filter(g => !q || `${g.term} ${g.def}`.toLowerCase().includes(q)).sort((x, y) => x.term.localeCompare(y.term)).map(g => { const s = all.find(x => x.id === g.section); return { term: g.term, node: rich(g.def), section: g.section, sectionTitle: s ? s.title : '', go: () => this.go({ view: 'section', id: g.section }) }; });
+      Object.assign(vals, { glossaryQuery: S.glossaryQuery, setGlossaryQuery: e => this.setState({ glossaryQuery: e.target.value }), glossaryItems: items, glossaryEmpty: items.length === 0 });
+    }
+    return vals;
+  }
+}
+</script>
+</body>
+</html>
