@@ -60,7 +60,7 @@ function Stub({ sec }: { sec: SectionRef }) {
     <div className="card flex flex-col gap-3.5 p-[22px] mb-6">
       {sec.summary && (
         <>
-          <p className="max-w-[65ch] text-pretty"><Rich text={sec.summary} /></p>
+          <p className="text-pretty"><Rich text={sec.summary} /></p>
           {sec.formula && <div className="px-4 py-3.5 rounded-xl bg-soft text-[18px] overflow-x-auto"><Tex tex={sec.formula} display /></div>}
         </>
       )}
@@ -82,7 +82,7 @@ function Built({ sec, lesson }: { sec: SectionRef; lesson: LessonData }) {
 
   return (
     <>
-      <div className="max-w-[68ch] flex flex-col gap-2.5 mb-6">
+      <div className="flex flex-col gap-2.5 mb-6">
         {lesson.intro.map((p, i) => <p key={i} className="text-pretty"><Rich text={p} /></p>)}
       </div>
 
