@@ -1,9 +1,23 @@
-import { chapters, lessons } from './chapters';
-import { questions } from './questions';
-import { theorems, glossary } from './theorems';
-import type { Chapter, Question, SectionRef, Theorem } from './types';
+import type { Chapter, ChapterContent, GlossaryEntry, Lesson, Question, SectionRef, Theorem } from './types';
+import { ch1 } from './chapters/ch1';
+import { ch2 } from './chapters/ch2';
+import { ch3 } from './chapters/ch3';
+import { ch4 } from './chapters/ch4';
+import { ch5 } from './chapters/ch5';
+import { ch6 } from './chapters/ch6';
+import { ch7 } from './chapters/ch7';
+import { ch8 } from './chapters/ch8';
+import { ch9 } from './chapters/ch9';
+import { ch10 } from './chapters/ch10';
 
-export { chapters, lessons, questions, theorems, glossary };
+/** All chapter modules in reading order. Add a chapter here and nothing else changes. */
+export const chapterContents: ChapterContent[] = [ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, ch10];
+
+export const chapters: Chapter[] = chapterContents.map((c) => c.chapter);
+export const lessons: Record<string, Lesson> = Object.assign({}, ...chapterContents.map((c) => c.lessons));
+export const questions: Question[] = chapterContents.flatMap((c) => c.questions);
+export const theorems: Theorem[] = chapterContents.flatMap((c) => c.theorems);
+export const glossary: GlossaryEntry[] = chapterContents.flatMap((c) => c.glossary);
 
 /** Every section in reading order, with its chapter attached. */
 export const allSections: SectionRef[] = chapters.flatMap((ch) => ch.sections.map((s) => ({ ...s, chapter: ch })));

@@ -3,19 +3,35 @@ import { Rich, Tex } from '../components/Math';
 import { QuestionCard } from '../components/QuestionCard';
 import { findQuestion, findSection, findTheorem, lessonIndex, lessons } from '../content';
 import type { DiagramKind, Lesson as LessonData, SectionRef } from '../content/types';
+import { AngleDiagram } from '../diagrams/AngleDiagram';
+import { AreaDiagram } from '../diagrams/AreaDiagram';
+import { CircleDiagram } from '../diagrams/CircleDiagram';
 import { DistanceGrid } from '../diagrams/DistanceGrid';
 import { InscribedAngle } from '../diagrams/InscribedAngle';
+import { PolygonDiagram } from '../diagrams/PolygonDiagram';
 import { Prism } from '../diagrams/Prism';
+import { SimilarDiagram } from '../diagrams/SimilarDiagram';
+import { SolidDiagram } from '../diagrams/SolidDiagram';
+import { TransversalDiagram } from '../diagrams/TransversalDiagram';
+import { TriangleDiagram } from '../diagrams/TriangleDiagram';
 import { usePractice } from '../store/practice';
 import { Explainer } from '../videos/Explainer';
 import { VIDEOS } from '../videos';
 import { Problems } from './Problems';
 import { SectionFooter } from './SectionFooter';
 
-const DIAGRAMS: Record<DiagramKind, { hint: string; component: React.ComponentType }> = {
+const DIAGRAMS: Record<DiagramKind, { hint: string; component: React.ComponentType<{ sectionId: string }> }> = {
   inscribed: { hint: 'Drag the points on the circle.', component: InscribedAngle },
   prism: { hint: 'Use the sliders. Switch between right and oblique.', component: Prism },
   distance: { hint: 'Drag the points on the grid.', component: DistanceGrid },
+  angle: { hint: 'Drag point C around the vertex.', component: AngleDiagram },
+  transversal: { hint: 'Move the slider. Turn the parallel toggle on and off.', component: TransversalDiagram },
+  triangle: { hint: 'Drag the three vertices.', component: TriangleDiagram },
+  polygon: { hint: 'Change the number of sides and the side length.', component: PolygonDiagram },
+  area: { hint: 'Choose a shape. Use the sliders.', component: AreaDiagram },
+  circle: { hint: 'Change the radius and the central angle.', component: CircleDiagram },
+  similar: { hint: 'Drag the small triangle. Change the scale factor.', component: SimilarDiagram },
+  solid: { hint: 'Choose a solid. Use the sliders.', component: SolidDiagram },
 };
 
 export function Lesson() {
@@ -54,9 +70,9 @@ function Stub({ sec }: { sec: SectionRef }) {
 }
 
 function Built({ sec, lesson }: { sec: SectionRef; lesson: LessonData }) {
-  const diagram = DIAGRAMS[lesson.diagram];
-  const Diagram = diagram.component;
-  const video = VIDEOS[lesson.video];
+  const diagram = lesson.diagram ? DIAGRAMS[lesson.diagram] : null;
+  const Diagram = diagram?.component;
+  const video = lesson.video ? VIDEOS[lesson.video] : null;
   const answers = usePractice((s) => s.answers);
   const setAnswer = usePractice((s) => s.setAnswer);
   const openExamples = usePractice((s) => s.openExamples);
@@ -70,13 +86,15 @@ function Built({ sec, lesson }: { sec: SectionRef; lesson: LessonData }) {
         {lesson.intro.map((p, i) => <p key={i} className="text-pretty"><Rich text={p} /></p>)}
       </div>
 
-      <section className="card mb-6" aria-labelledby="diagram-h">
-        <div className="flex items-baseline gap-3 flex-wrap mb-3">
-          <h2 id="diagram-h" className="h3">Interactive diagram</h2>
-          <div className="text-[13px] text-muted">{diagram.hint}</div>
-        </div>
-        <Diagram />
-      </section>
+      {diagram && Diagram && (
+        <section className="card mb-6" aria-labelledby="diagram-h">
+          <div className="flex items-baseline gap-3 flex-wrap mb-3">
+            <h2 id="diagram-h" className="h3">Interactive diagram</h2>
+            <div className="text-[13px] text-muted">{diagram.hint}</div>
+          </div>
+          <Diagram key={sec.id} sectionId={sec.id} />
+        </section>
+      )}
 
       <section className="grid gap-4 mb-6 grid-cols-[repeat(auto-fit,minmax(260px,1fr))]" aria-label="Definitions and formulas">
         <div className="card">
@@ -87,6 +105,7 @@ function Built({ sec, lesson }: { sec: SectionRef; lesson: LessonData }) {
             ))}
           </dl>
         </div>
+        {lesson.formulas.length > 0 && (
         <div className="card">
           <h2 className="h3 mb-2.5">Formulas</h2>
           <div className="flex flex-col gap-3">
@@ -95,9 +114,10 @@ function Built({ sec, lesson }: { sec: SectionRef; lesson: LessonData }) {
             ))}
           </div>
         </div>
+        )}
       </section>
 
-      <Explainer title={lesson.videoTitle} scenes={video.scenes} piece={video.piece} />
+      {video && <Explainer title={lesson.videoTitle ?? ''} scenes={video.scenes} piece={video.piece} />}
 
       <section className="mb-6" aria-labelledby="examples-h">
         <h2 id="examples-h" className="h2 mb-3">Worked examples</h2>
@@ -108,7 +128,7 @@ function Built({ sec, lesson }: { sec: SectionRef; lesson: LessonData }) {
             const stepsId = `steps-${sec.id}-${i}`;
             return (
               <article key={ex.title} className="card p-[18px_20px]">
-                <h3 className="font-medium text-accent text-[20px] font-display mb-1">{ex.title}</h3>
+                <h3 className="font-medium text-accent text-[20px] font-display mb-1"><Rich text={ex.title} /></h3>
                 <div className="mb-2.5"><Rich text={ex.given} /></div>
                 <button type="button" className="btn btn-soft" aria-expanded={open} aria-controls={stepsId} onClick={() => toggleExample(key)}>{open ? 'Hide steps' : 'Show steps'}</button>
                 {open && (
@@ -130,6 +150,7 @@ function Built({ sec, lesson }: { sec: SectionRef; lesson: LessonData }) {
         </div>
       </section>
 
+      {used.length > 0 && (
       <section className="card p-[18px_20px] mb-6" aria-labelledby="theorems-h">
         <h2 id="theorems-h" className="h3 mb-2">Postulates and theorems used here</h2>
         <ul className="flex flex-col gap-1.5 list-none p-0">
@@ -143,6 +164,7 @@ function Built({ sec, lesson }: { sec: SectionRef; lesson: LessonData }) {
           ))}
         </ul>
       </section>
+      )}
     </>
   );
 }
