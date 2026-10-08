@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { questions } from '../content';
+import { chapters, questions } from '../content';
 import { buildExam, examPool, scoreExam } from '../lib/exam';
 
 describe('exam', () => {
@@ -8,7 +8,7 @@ describe('exam', () => {
     expect(pool.length).toBeGreaterThan(0);
     expect(pool.every((q) => q.chapter === 'ch8')).toBe(true);
     expect(examPool(questions, { ch8: false, ch9: false, ch10: false })).toHaveLength(0);
-    const all = examPool(questions, { ch8: true, ch9: true, ch10: true });
+    const all = examPool(questions, Object.fromEntries(chapters.map((c) => [c.id, true])));
     expect(all.length).toBe(questions.length);
   });
   it('takes N questions, clamped to the pool size, with no duplicates', () => {
@@ -16,8 +16,9 @@ describe('exam', () => {
     expect(ten).toHaveLength(10);
     expect(new Set(ten).size).toBe(10);
     const ch8Size = examPool(questions, { ch8: true }).length;
-    const clamped = buildExam(questions, { ch8: true }, 20);
+    const clamped = buildExam(questions, { ch8: true }, 1000);
     expect(clamped).toHaveLength(ch8Size);
+    expect(buildExam(questions, { ch8: true }, 20)).toHaveLength(Math.min(20, ch8Size));
     expect(buildExam(questions, {}, 5)).toHaveLength(0);
   });
   it('per-chapter totals are correct', () => {
